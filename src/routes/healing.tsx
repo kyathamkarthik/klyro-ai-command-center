@@ -161,16 +161,18 @@ function Healing() {
             </div>
             <div className="mt-5 flex items-center justify-center gap-3">
               {[
-                { label: "Closed", tone: "success", active: true },
-                { label: "Half-open", tone: "warning", active: false },
-                { label: "Open", tone: "destructive", active: false },
+                { label: "Closed", tone: "border-success bg-success", active: true },
+                { label: "Half-open", tone: "border-warning bg-warning", active: false },
+                {
+                  label: "Open",
+                  tone: "border-destructive bg-destructive",
+                  active: false,
+                },
               ].map((s) => (
                 <div key={s.label} className="flex flex-col items-center gap-2">
                   <span
                     className={`h-9 w-9 rounded-full border-2 ${
-                      s.active
-                        ? `border-${s.tone} bg-${s.tone}`
-                        : "border-border bg-surface-muted"
+                      s.active ? s.tone : "border-border bg-surface-muted"
                     }`}
                   />
                   <span
