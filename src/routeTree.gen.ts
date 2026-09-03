@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HealingRouteImport } from './routes/healing'
 import { Route as ObserverRouteImport } from './routes/observer'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealingRoute = HealingRouteImport.update({
+  id: '/healing',
+  path: '/healing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ObserverRoute = ObserverRouteImport.update({
@@ -25,27 +31,31 @@ const ObserverRoute = ObserverRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/healing': typeof HealingRoute
   '/observer': typeof ObserverRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/healing': typeof HealingRoute
   '/observer': typeof ObserverRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/healing': typeof HealingRoute
   '/observer': typeof ObserverRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/observer'
+  fullPaths: '/' | '/healing' | '/observer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/observer'
-  id: '__root__' | '/' | '/observer'
+  to: '/' | '/healing' | '/observer'
+  id: '__root__' | '/' | '/healing' | '/observer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HealingRoute: typeof HealingRoute
   ObserverRoute: typeof ObserverRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/healing': {
+      id: '/healing'
+      path: '/healing'
+      fullPath: '/healing'
+      preLoaderRoute: typeof HealingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/observer': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HealingRoute: HealingRoute,
   ObserverRoute: ObserverRoute,
 }
 export const routeTree = rootRouteImport
