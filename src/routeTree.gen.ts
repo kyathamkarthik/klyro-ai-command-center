@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EscalationRouteImport } from './routes/escalation'
+import { Route as HealingRouteImport } from './routes/healing'
+import { Route as ObserverRouteImport } from './routes/observer'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EscalationRoute = EscalationRouteImport.update({
+  id: '/escalation',
+  path: '/escalation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HealingRoute = HealingRouteImport.update({
+  id: '/healing',
+  path: '/healing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ObserverRoute = ObserverRouteImport.update({
+  id: '/observer',
+  path: '/observer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/escalation': typeof EscalationRoute
+  '/healing': typeof HealingRoute
+  '/observer': typeof ObserverRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/escalation': typeof EscalationRoute
+  '/healing': typeof HealingRoute
+  '/observer': typeof ObserverRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/escalation': typeof EscalationRoute
+  '/healing': typeof HealingRoute
+  '/observer': typeof ObserverRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/escalation' | '/healing' | '/observer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/escalation' | '/healing' | '/observer'
+  id: '__root__' | '/' | '/escalation' | '/healing' | '/observer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EscalationRoute: typeof EscalationRoute
+  HealingRoute: typeof HealingRoute
+  ObserverRoute: typeof ObserverRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/escalation': {
+      id: '/escalation'
+      path: '/escalation'
+      fullPath: '/escalation'
+      preLoaderRoute: typeof EscalationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/healing': {
+      id: '/healing'
+      path: '/healing'
+      fullPath: '/healing'
+      preLoaderRoute: typeof HealingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/observer': {
+      id: '/observer'
+      path: '/observer'
+      fullPath: '/observer'
+      preLoaderRoute: typeof ObserverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EscalationRoute: EscalationRoute,
+  HealingRoute: HealingRoute,
+  ObserverRoute: ObserverRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
