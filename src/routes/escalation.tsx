@@ -88,7 +88,7 @@ const queue = [
 ];
 
 function Escalation() {
-  const [selected, setSelected] = useState(queue[0].id);
+  const [selected, setSelected] = useState<string>(queue[0]!.id);
   const [decisions, setDecisions] = useState<Record<string, string>>({});
   const item = queue.find((q) => q.id === selected)!;
 
