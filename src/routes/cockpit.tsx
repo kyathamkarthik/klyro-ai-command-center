@@ -37,13 +37,43 @@ const environments = [
 function TenantHub() {
   const [env, setEnv] = useState("prod");
   const [connecting, setConnecting] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   const [tenant, setTenant] = useState("klyro-prd-it-cpi012");
   const [clientId, setClientId] = useState("sb-6b1e9a0f!b12345|it-rt-klyro-prd");
   const [secret, setSecret] = useState("a4f9-cc21-77bd-9f30-e1aa");
 
-  const connect = () => {
+  const connect = async () => {
     setConnecting(true);
-    setTimeout(() => setConnecting(false), 1200);
+    setResult(null);
+    try {
+      const res = await fetch(
+        "https://klyro-backend-spme.onrender.com/api/v1/connect-tenant",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tenant_id: tenant,
+            client_id: clientId,
+            client_secret: secret,
+            environment: env,
+          }),
+        },
+      );
+      const text = await res.text();
+      setResult({
+        ok: res.ok,
+        message: res.ok
+          ? `Tenant handshake successful (${res.status})`
+          : `Connection failed (${res.status}) ${text.slice(0, 120)}`,
+      });
+    } catch (error) {
+      setResult({
+        ok: false,
+        message: `Could not reach Klyro backend: ${(error as Error).message}`,
+      });
+    } finally {
+      setConnecting(false);
+    }
   };
 
   return (
