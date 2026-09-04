@@ -90,7 +90,46 @@ const queue = [
 function Escalation() {
   const [selected, setSelected] = useState<string>(queue[0]!.id);
   const [decisions, setDecisions] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   const item = queue.find((q) => q.id === selected)!;
+
+  const approve = async () => {
+    setPending(true);
+    setResult(null);
+    try {
+      const res = await fetch(
+        "https://klyro-backend-spme.onrender.com/api/v1/retrigger-sap",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mpl_id: item.id,
+            iflow: item.iflow,
+            payload: JSON.parse(item.suggested),
+          }),
+        },
+      );
+      const text = await res.text();
+      if (res.ok) {
+        setDecisions((d) => ({ ...d, [item.id]: "Approved" }));
+        setResult({ ok: true, message: `Re-trigger accepted by SAP (${res.status})` });
+      } else {
+        setResult({
+          ok: false,
+          message: `Re-trigger failed (${res.status}) ${text.slice(0, 120)}`,
+        });
+      }
+    } catch (error) {
+      setResult({
+        ok: false,
+        message: `Could not reach Klyro backend: ${(error as Error).message}`,
+      });
+    } finally {
+      setPending(false);
+    }
+  };
+
 
   return (
     <DashboardLayout
@@ -168,19 +207,28 @@ function Escalation() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border p-4">
-            <Button
-              variant="outline"
-              onClick={() => setDecisions((d) => ({ ...d, [item.id]: "Rejected" }))}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border p-4">
+            <span
+              className={`text-xs ${
+                result ? (result.ok ? "text-success" : "text-destructive") : "text-transparent"
+              }`}
             >
-              <X className="mr-2 h-4 w-4" /> Reject
-            </Button>
-            <Button
-              onClick={() => setDecisions((d) => ({ ...d, [item.id]: "Approved" }))}
-            >
-              <Check className="mr-2 h-4 w-4" /> Approve & Re-trigger
-            </Button>
+              {result?.message ?? "."}
+            </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setDecisions((d) => ({ ...d, [item.id]: "Rejected" }))}
+              >
+                <X className="mr-2 h-4 w-4" /> Reject
+              </Button>
+              <Button onClick={approve} disabled={pending}>
+                <Check className="mr-2 h-4 w-4" />
+                {pending ? "Re-triggering…" : "Approve & Re-trigger"}
+              </Button>
+            </div>
           </div>
+
         </section>
       </div>
     </DashboardLayout>

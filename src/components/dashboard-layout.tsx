@@ -1,19 +1,28 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
   Bot,
   ChevronDown,
+  CreditCard,
   LogOut,
   Plug,
   Settings,
   ShieldCheck,
+  Sparkles,
   UserRound,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import logoAsset from "@/assets/klyro-logo.png.asset.json";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,13 +31,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { isSignedIn, signOut } from "@/lib/auth";
 
 const navItems = [
-  { to: "/", label: "Tenant & Connection Hub", icon: Plug },
+  { to: "/cockpit", label: "Tenant & Connection Hub", icon: Plug },
   { to: "/observer", label: "IFlow & MPL Observer", icon: Activity },
   { to: "/healing", label: "Autonomous Healing", icon: Bot },
   { to: "/escalation", label: "HITL Escalation Queue", icon: ShieldCheck },
+  { to: "/billing", label: "Billing & Plans", icon: CreditCard },
 ] as const;
+
+export const FOUNDER_BIO =
+  "Built for the enterprise. Klyro AI is founded by a B.E. Computer Science Engineer specializing in SAP Business Technology Platform and autonomous cloud integration. Backed by an AI/ML certification from IIT Patna Hub and a 1st place victory at the IIT Hyderabad Techgyan Hackathon, Klyro AI bridges the gap between static enterprise architectures and autonomous healing.";
 
 export function DashboardLayout({
   title,
@@ -40,12 +54,37 @@ export function DashboardLayout({
   children: ReactNode;
 }) {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const navigate = useNavigate();
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [founderOpen, setFounderOpen] = useState(false);
+
+  useEffect(() => {
+    const ok = isSignedIn();
+    setAuthed(ok);
+    if (!ok) navigate({ to: "/", replace: true });
+  }, [navigate]);
+
+  if (!authed) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+        Verifying session…
+      </div>
+    );
+  }
+
+  const handleSignOut = () => {
+    signOut();
+    navigate({ to: "/", replace: true });
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
-        <div className="flex h-16 items-center border-b border-sidebar-border px-5">
-          <img src={logoAsset.url} alt="Klyro AI" className="h-7 w-auto" />
+        <div className="flex h-20 items-center gap-2.5 border-b border-sidebar-border px-5">
+          <img src={logoAsset.url} alt="Klyro AI" className="h-10 w-auto" />
+          <span className="text-3xl font-extrabold tracking-tight text-sidebar-foreground">
+            Klyro AI
+          </span>
         </div>
         <nav className="flex-1 space-y-1 p-3">
           <p className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -69,7 +108,14 @@ export function DashboardLayout({
             );
           })}
         </nav>
-        <div className="border-t border-sidebar-border p-4 text-xs text-muted-foreground">
+        <div className="space-y-3 border-t border-sidebar-border p-4 text-xs text-muted-foreground">
+          <button
+            onClick={() => setFounderOpen(true)}
+            className="flex w-full items-center gap-2 rounded-sm border border-primary/40 bg-primary/5 px-3 py-2.5 text-left text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
+          >
+            <Sparkles className="h-4 w-4 shrink-0" />
+            About the Founder
+          </button>
           <div className="flex items-center justify-between">
             <span>Agent runtime</span>
             <Badge variant="outline" className="border-success/40 text-success">
@@ -115,7 +161,7 @@ export function DashboardLayout({
                 <Settings className="mr-2 h-4 w-4" /> SSO & SAML settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" /> Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -132,10 +178,27 @@ export function DashboardLayout({
               {item.label}
             </Link>
           ))}
+          <button
+            onClick={() => setFounderOpen(true)}
+            className="whitespace-nowrap rounded-sm border border-primary/40 px-3 py-1.5 text-xs font-semibold text-primary"
+          >
+            About the Founder
+          </button>
         </div>
 
         <main className="flex-1 p-6">{children}</main>
       </div>
+
+      <Dialog open={founderOpen} onOpenChange={setFounderOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-lg">About the Founder</DialogTitle>
+            <DialogDescription className="pt-2 text-sm leading-relaxed text-foreground">
+              {FOUNDER_BIO}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
