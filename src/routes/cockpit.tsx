@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/cockpit")({
   head: () => ({
     meta: [
       { title: "Tenant & Connection Hub | Klyro AI" },
