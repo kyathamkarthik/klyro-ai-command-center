@@ -207,19 +207,28 @@ function Escalation() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border p-4">
-            <Button
-              variant="outline"
-              onClick={() => setDecisions((d) => ({ ...d, [item.id]: "Rejected" }))}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border p-4">
+            <span
+              className={`text-xs ${
+                result ? (result.ok ? "text-success" : "text-destructive") : "text-transparent"
+              }`}
             >
-              <X className="mr-2 h-4 w-4" /> Reject
-            </Button>
-            <Button
-              onClick={() => setDecisions((d) => ({ ...d, [item.id]: "Approved" }))}
-            >
-              <Check className="mr-2 h-4 w-4" /> Approve & Re-trigger
-            </Button>
+              {result?.message ?? "."}
+            </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setDecisions((d) => ({ ...d, [item.id]: "Rejected" }))}
+              >
+                <X className="mr-2 h-4 w-4" /> Reject
+              </Button>
+              <Button onClick={approve} disabled={pending}>
+                <Check className="mr-2 h-4 w-4" />
+                {pending ? "Re-triggering…" : "Approve & Re-trigger"}
+              </Button>
+            </div>
           </div>
+
         </section>
       </div>
     </DashboardLayout>
