@@ -138,7 +138,19 @@ function TenantHub() {
               Last handshake 3 min ago · token TTL 11h 42m
             </span>
           </div>
+          {result && (
+            <p
+              className={`mt-4 rounded-sm border px-3 py-2 text-xs ${
+                result.ok
+                  ? "border-success/40 bg-success/10 text-success"
+                  : "border-destructive/40 bg-destructive/10 text-destructive"
+              }`}
+            >
+              {result.message}
+            </p>
+          )}
         </section>
+
 
         <aside className="space-y-6">
           <section className="panel p-5">
