@@ -90,7 +90,46 @@ const queue = [
 function Escalation() {
   const [selected, setSelected] = useState<string>(queue[0]!.id);
   const [decisions, setDecisions] = useState<Record<string, string>>({});
+  const [pending, setPending] = useState(false);
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   const item = queue.find((q) => q.id === selected)!;
+
+  const approve = async () => {
+    setPending(true);
+    setResult(null);
+    try {
+      const res = await fetch(
+        "https://klyro-backend-spme.onrender.com/api/v1/retrigger-sap",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mpl_id: item.id,
+            iflow: item.iflow,
+            payload: JSON.parse(item.suggested),
+          }),
+        },
+      );
+      const text = await res.text();
+      if (res.ok) {
+        setDecisions((d) => ({ ...d, [item.id]: "Approved" }));
+        setResult({ ok: true, message: `Re-trigger accepted by SAP (${res.status})` });
+      } else {
+        setResult({
+          ok: false,
+          message: `Re-trigger failed (${res.status}) ${text.slice(0, 120)}`,
+        });
+      }
+    } catch (error) {
+      setResult({
+        ok: false,
+        message: `Could not reach Klyro backend: ${(error as Error).message}`,
+      });
+    } finally {
+      setPending(false);
+    }
+  };
+
 
   return (
     <DashboardLayout
