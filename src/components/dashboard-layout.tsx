@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
-import logoAsset from "@/assets/klyro-logo.png.asset.json";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -31,7 +31,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { isSignedIn, signOut } from "@/lib/auth";
+import { getUserEmail, isSignedIn, signOut } from "@/lib/auth";
 
 const navItems = [
   { to: "/cockpit", label: "Tenant & Connection Hub", icon: Plug },
@@ -42,7 +42,7 @@ const navItems = [
 ] as const;
 
 export const FOUNDER_BIO =
-  "Built for the enterprise. Klyro AI is founded by a B.E. Computer Science Engineer specializing in SAP Business Technology Platform and autonomous cloud integration. Backed by an AI/ML certification from IIT Patna Hub and a 1st place victory at the IIT Hyderabad Techgyan Hackathon, Klyro AI bridges the gap between static enterprise architectures and autonomous healing.";
+  "Founded by Kyatham Karthik, a B.E. Computer Science Engineer specializing in SAP BTP and autonomous cloud integration. Backed by an AI/ML certification from IIT Patna Hub and a 1st place victory at the IIT Hyderabad Techgyan Hackathon, Klyro AI bridges the gap between static enterprise architectures and autonomous healing.";
 
 export function DashboardLayout({
   title,
