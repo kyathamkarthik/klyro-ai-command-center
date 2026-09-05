@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { useState } from "react";
 
-import logoAsset from "@/assets/klyro-logo.png.asset.json";
+
 import { FOUNDER_BIO } from "@/components/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,18 +42,15 @@ function LoginPage() {
   const [founderOpen, setFounderOpen] = useState(false);
 
   const enter = (plan: "signin" | "trial") => {
-    signIn(plan);
+    signIn(plan, email);
     navigate({ to: "/cockpit" });
   };
 
   return (
     <div className="grid min-h-screen bg-background lg:grid-cols-[minmax(0,1fr)_480px]">
       <section className="hidden flex-col justify-between border-r border-border bg-sidebar p-12 lg:flex">
-        <div className="flex items-center gap-3">
-          <img src={logoAsset.url} alt="Klyro AI" className="h-11 w-auto" />
-          <span className="text-3xl font-extrabold tracking-tight text-sidebar-foreground">
-            Klyro AI
-          </span>
+        <div className="flex items-center">
+          <img src="/logo.png" alt="Klyro Logo" className="h-10 w-auto" />
         </div>
         <div className="max-w-lg">
           <h1 className="text-3xl font-semibold leading-tight tracking-tight text-foreground">
@@ -86,9 +83,8 @@ function LoginPage() {
 
       <section className="flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
-          <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <img src={logoAsset.url} alt="Klyro AI" className="h-9 w-auto" />
-            <span className="text-3xl font-extrabold tracking-tight">Klyro AI</span>
+          <div className="mb-8 flex items-center lg:hidden">
+            <img src="/logo.png" alt="Klyro Logo" className="h-10 w-auto" />
           </div>
           <h2 className="text-lg font-semibold text-foreground">Sign in to your cockpit</h2>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -141,7 +137,12 @@ function LoginPage() {
       <Dialog open={founderOpen} onOpenChange={setFounderOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-lg">About the Founder</DialogTitle>
+            <img
+              src="/karthik.jpg"
+              alt="Kyatham Karthik"
+              className="rounded-full h-24 w-24 mx-auto mb-4 object-cover shadow-lg"
+            />
+            <DialogTitle className="text-center text-lg">About the Founder</DialogTitle>
             <DialogDescription className="pt-2 text-sm leading-relaxed text-foreground">
               {FOUNDER_BIO}
             </DialogDescription>

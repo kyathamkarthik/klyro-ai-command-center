@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
-import logoAsset from "@/assets/klyro-logo.png.asset.json";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -31,7 +31,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { isSignedIn, signOut } from "@/lib/auth";
+import { getUserEmail, isSignedIn, signOut } from "@/lib/auth";
 
 const navItems = [
   { to: "/cockpit", label: "Tenant & Connection Hub", icon: Plug },
@@ -42,7 +42,7 @@ const navItems = [
 ] as const;
 
 export const FOUNDER_BIO =
-  "Built for the enterprise. Klyro AI is founded by a B.E. Computer Science Engineer specializing in SAP Business Technology Platform and autonomous cloud integration. Backed by an AI/ML certification from IIT Patna Hub and a 1st place victory at the IIT Hyderabad Techgyan Hackathon, Klyro AI bridges the gap between static enterprise architectures and autonomous healing.";
+  "Founded by Kyatham Karthik, a B.E. Computer Science Engineer specializing in SAP BTP and autonomous cloud integration. Backed by an AI/ML certification from IIT Patna Hub and a 1st place victory at the IIT Hyderabad Techgyan Hackathon, Klyro AI bridges the gap between static enterprise architectures and autonomous healing.";
 
 export function DashboardLayout({
   title,
@@ -57,6 +57,17 @@ export function DashboardLayout({
   const navigate = useNavigate();
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [founderOpen, setFounderOpen] = useState(false);
+  const email = getUserEmail() ?? "guest@klyro.ai";
+  const nameParts = (email.split("@")[0] ?? "")
+    .split(/[._-]/)
+    .filter(Boolean)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1));
+  const displayName = nameParts.join(" ") || "Klyro User";
+  const initials = nameParts
+    .map((p) => p.charAt(0))
+    .slice(0, 2)
+    .join("")
+    .toUpperCase() || "KU";
 
   useEffect(() => {
     const ok = isSignedIn();
@@ -80,11 +91,8 @@ export function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
-        <div className="flex h-20 items-center gap-2.5 border-b border-sidebar-border px-5">
-          <img src={logoAsset.url} alt="Klyro AI" className="h-10 w-auto" />
-          <span className="text-3xl font-extrabold tracking-tight text-sidebar-foreground">
-            Klyro AI
-          </span>
+        <div className="flex h-20 items-center border-b border-sidebar-border px-5">
+          <img src="/logo.png" alt="Klyro Logo" className="h-10 w-auto" />
         </div>
         <nav className="flex-1 space-y-1 p-3">
           <p className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -135,11 +143,11 @@ export function DashboardLayout({
             <DropdownMenuTrigger className="flex items-center gap-2 rounded-sm border border-border px-2 py-1.5 text-sm hover:bg-surface-muted">
               <Avatar className="h-7 w-7 rounded-sm">
                 <AvatarFallback className="rounded-sm bg-primary text-xs text-primary-foreground">
-                  AK
+                  {initials}
                 </AvatarFallback>
               </Avatar>
               <span className="hidden text-left leading-tight sm:block">
-                <span className="block text-xs font-medium">Anika Kaur</span>
+                <span className="block text-xs font-medium">{displayName}</span>
                 <span className="block text-[11px] text-muted-foreground">
                   Integration Lead
                 </span>
@@ -148,7 +156,7 @@ export function DashboardLayout({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">
               <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                anika.kaur@klyro.ai
+                {email}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
@@ -192,7 +200,12 @@ export function DashboardLayout({
       <Dialog open={founderOpen} onOpenChange={setFounderOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-lg">About the Founder</DialogTitle>
+            <img
+              src="/karthik.jpg"
+              alt="Kyatham Karthik"
+              className="rounded-full h-24 w-24 mx-auto mb-4 object-cover shadow-lg"
+            />
+            <DialogTitle className="text-center text-lg">About the Founder</DialogTitle>
             <DialogDescription className="pt-2 text-sm leading-relaxed text-foreground">
               {FOUNDER_BIO}
             </DialogDescription>

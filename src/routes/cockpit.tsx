@@ -41,6 +41,12 @@ function TenantHub() {
   const [tenant, setTenant] = useState("klyro-prd-it-cpi012");
   const [clientId, setClientId] = useState("sb-6b1e9a0f!b12345|it-rt-klyro-prd");
   const [secret, setSecret] = useState("a4f9-cc21-77bd-9f30-e1aa");
+  const [apiBaseUrl, setApiBaseUrl] = useState(
+    "https://klyro-prd.it-cpi012.cfapps.eu10.hana.ondemand.com",
+  );
+  const [tokenUrl, setTokenUrl] = useState(
+    "https://klyro-prd.authentication.eu10.hana.ondemand.com/oauth/token",
+  );
 
   const connect = async () => {
     setConnecting(true);
@@ -55,7 +61,8 @@ function TenantHub() {
             tenant_id: tenant,
             client_id: clientId,
             client_secret: secret,
-            environment: env,
+            api_base_url: apiBaseUrl,
+            token_url: tokenUrl,
           }),
         },
       );
@@ -106,6 +113,26 @@ function TenantHub() {
                 value={clientId}
                 onChange={(e) => setClientId(e.target.value)}
                 className="font-mono text-xs"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="api-base-url">API Base URL</Label>
+              <Input
+                id="api-base-url"
+                value={apiBaseUrl}
+                onChange={(e) => setApiBaseUrl(e.target.value)}
+                className="font-mono text-xs"
+                placeholder="https://<tenant>.cfapps.<region>.hana.ondemand.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="token-url">Token URL</Label>
+              <Input
+                id="token-url"
+                value={tokenUrl}
+                onChange={(e) => setTokenUrl(e.target.value)}
+                className="font-mono text-xs"
+                placeholder="https://<tenant>.authentication.<region>.hana.ondemand.com/oauth/token"
               />
             </div>
             <div className="space-y-2 sm:col-span-2">
