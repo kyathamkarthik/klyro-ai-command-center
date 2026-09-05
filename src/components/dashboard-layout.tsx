@@ -143,20 +143,19 @@ export function DashboardLayout({
             <DropdownMenuTrigger className="flex items-center gap-2 rounded-sm border border-border px-2 py-1.5 text-sm hover:bg-surface-muted">
               <Avatar className="h-7 w-7 rounded-sm">
                 <AvatarFallback className="rounded-sm bg-primary text-xs text-primary-foreground">
-                  AK
+                  {initials}
                 </AvatarFallback>
               </Avatar>
               <span className="hidden text-left leading-tight sm:block">
-                <span className="block text-xs font-medium">Anika Kaur</span>
+                <span className="block text-xs font-medium">{displayName}</span>
                 <span className="block text-[11px] text-muted-foreground">
                   Integration Lead
                 </span>
               </span>
-              <ChevronDown className="h-4 w-4 text-muted-foreground" />
-            </DropdownMenuTrigger>
+...
             <DropdownMenuContent align="end" className="w-60">
               <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-                anika.kaur@klyro.ai
+                {email}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
