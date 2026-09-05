@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import { useState } from "react";
 
-import logoAsset from "@/assets/klyro-logo.png.asset.json";
+
 import { FOUNDER_BIO } from "@/components/dashboard-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,7 +42,7 @@ function LoginPage() {
   const [founderOpen, setFounderOpen] = useState(false);
 
   const enter = (plan: "signin" | "trial") => {
-    signIn(plan);
+    signIn(plan, email);
     navigate({ to: "/cockpit" });
   };
 
