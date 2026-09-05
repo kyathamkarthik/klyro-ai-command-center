@@ -137,7 +137,12 @@ function LoginPage() {
       <Dialog open={founderOpen} onOpenChange={setFounderOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-lg">About the Founder</DialogTitle>
+            <img
+              src="/karthik.jpg"
+              alt="Kyatham Karthik"
+              className="rounded-full h-24 w-24 mx-auto mb-4 object-cover shadow-lg"
+            />
+            <DialogTitle className="text-center text-lg">About the Founder</DialogTitle>
             <DialogDescription className="pt-2 text-sm leading-relaxed text-foreground">
               {FOUNDER_BIO}
             </DialogDescription>
