@@ -61,7 +61,8 @@ export function DashboardLayout({
   const displayName = email
     .split("@")[0]
     .split(/[._-]/)
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .map((p) => (p ? p.charAt(0).toUpperCase() + p.slice(1) : ""))
+    .filter(Boolean)
     .join(" ");
   const initials = displayName
     .split(" ")
