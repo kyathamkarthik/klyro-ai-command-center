@@ -115,6 +115,26 @@ function TenantHub() {
                 className="font-mono text-xs"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="api-base-url">API Base URL</Label>
+              <Input
+                id="api-base-url"
+                value={apiBaseUrl}
+                onChange={(e) => setApiBaseUrl(e.target.value)}
+                className="font-mono text-xs"
+                placeholder="https://<tenant>.cfapps.<region>.hana.ondemand.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="token-url">Token URL</Label>
+              <Input
+                id="token-url"
+                value={tokenUrl}
+                onChange={(e) => setTokenUrl(e.target.value)}
+                className="font-mono text-xs"
+                placeholder="https://<tenant>.authentication.<region>.hana.ondemand.com/oauth/token"
+              />
+            </div>
             <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="secret">Client Secret</Label>
               <div className="relative">
