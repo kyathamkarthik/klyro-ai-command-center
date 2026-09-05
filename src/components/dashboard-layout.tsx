@@ -152,7 +152,8 @@ export function DashboardLayout({
                   Integration Lead
                 </span>
               </span>
-...
+              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-60">
               <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
                 {email}
