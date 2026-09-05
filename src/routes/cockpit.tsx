@@ -49,7 +49,9 @@ function TenantHub() {
   );
 
   const connect = async () => {
-...
+    setConnecting(true);
+    setResult(null);
+    try {
       const res = await fetch(
         "https://klyro-backend-spme.onrender.com/api/v1/connect-tenant",
         {
