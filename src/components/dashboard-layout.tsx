@@ -57,6 +57,18 @@ export function DashboardLayout({
   const navigate = useNavigate();
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [founderOpen, setFounderOpen] = useState(false);
+  const email = getUserEmail() ?? "guest@klyro.ai";
+  const displayName = email
+    .split("@")[0]
+    .split(/[._-]/)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(" ");
+  const initials = displayName
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
   useEffect(() => {
     const ok = isSignedIn();
