@@ -3,7 +3,7 @@
 // backend for all frontend reads/writes and auth.
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = "https://gmwcsrllveveoouifsdj.supabase.co";
+const SUPABASE_URL = "https://gmwcsrllyeveoouifsdj.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_ICqZxvOy-CGsnQQKUT1HPg_Js0aLB9U";
 
 function externalFetch(): typeof fetch {
