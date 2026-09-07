@@ -49,8 +49,13 @@ export function useWallet(userId: string | undefined) {
 
   useEffect(() => {
     if (!userId) return;
+
+    // A unique channel name prevents multiple consumers / React Strict Mode re-mounts
+    // from reusing an already-subscribed channel instance, which would raise
+    // "cannot add 'postgres_changes' callbacks after 'subscribe()'".
+    const channelId = `${userId}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`wallet-${userId}`)
+      .channel(`wallet-${channelId}`)
       .on(
         "postgres_changes",
         {
