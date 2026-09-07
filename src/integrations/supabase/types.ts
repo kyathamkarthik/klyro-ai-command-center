@@ -14,7 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      credit_packages: {
+        Row: {
+          created_at: string
+          credits: number | null
+          id: string
+          is_active: boolean
+          is_custom: boolean
+          name: string
+          price_usd: number | null
+          sort_order: number
+          tier: string
+        }
+        Insert: {
+          created_at?: string
+          credits?: number | null
+          id?: string
+          is_active?: boolean
+          is_custom?: boolean
+          name: string
+          price_usd?: number | null
+          sort_order?: number
+          tier: string
+        }
+        Update: {
+          created_at?: string
+          credits?: number | null
+          id?: string
+          is_active?: boolean
+          is_custom?: boolean
+          name?: string
+          price_usd?: number | null
+          sort_order?: number
+          tier?: string
+        }
+        Relationships: []
+      }
+      credit_transactions: {
+        Row: {
+          created_at: string
+          credits_used: number
+          feature: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits_used: number
+          feature: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credits_used?: number
+          feature?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      credit_wallets: {
+        Row: {
+          created_at: string
+          current_balance: number
+          id: string
+          total_purchased: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_balance?: number
+          id?: string
+          total_purchased?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_balance?: number
+          id?: string
+          total_purchased?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
