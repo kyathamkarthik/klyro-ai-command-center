@@ -30,19 +30,18 @@ export function LoginScreen() {
     if (!loading && session) navigate({ to: "/cockpit", replace: true });
   }, [loading, session, navigate]);
 
-  const signInWithGoogle = async () => {
-    setBusy("google");
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+  const signInWithProvider = async (provider: "google" | "github") => {
+    setBusy(provider);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: window.location.origin + "/cockpit" },
     });
-    if (result.error) {
-      toast.error("Google sign-in failed. Please try again.");
+    if (error) {
+      toast.error(`${provider === "google" ? "Google" : "GitHub"} sign-in failed. Please try again.`);
       setBusy(null);
-      return;
     }
-    if (result.redirected) return;
-    navigate({ to: "/cockpit", replace: true });
   };
+
 
   const withEmail = async (mode: "signin" | "signup") => {
     if (!email || !password) {
