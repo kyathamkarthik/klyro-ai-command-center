@@ -6,6 +6,7 @@ import { CreditsExhaustedBanner, useCreditGuard } from "@/components/credit-wall
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { consumeCredits } from "@/lib/wallet";
 
 export const Route = createFileRoute("/escalation")({
   head: () => ({
@@ -94,8 +95,10 @@ function Escalation() {
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   const item = queue.find((q) => q.id === selected)!;
+  const { userId, balance, exhausted } = useCreditGuard();
 
   const approve = async () => {
+    if (exhausted || !userId) return;
     setPending(true);
     setResult(null);
     try {
@@ -114,6 +117,7 @@ function Escalation() {
       const text = await res.text();
       if (res.ok) {
         setDecisions((d) => ({ ...d, [item.id]: "Approved" }));
+        await consumeCredits(userId, "Approve & Re-trigger", 0.5, balance);
         setResult({ ok: true, message: `Re-trigger accepted by SAP (${res.status})` });
       } else {
         setResult({
@@ -137,6 +141,12 @@ function Escalation() {
       title="HITL Escalation Queue"
       description="Master data reviews where agent confidence fell below the autonomy threshold"
     >
+      {exhausted ? (
+        <div className="mb-6">
+          <CreditsExhaustedBanner />
+        </div>
+      ) : null}
+
       <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="panel">
           <div className="flex items-center justify-between border-b border-border p-4">
