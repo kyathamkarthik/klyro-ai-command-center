@@ -31,7 +31,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getUserEmail, isSignedIn, signOut } from "@/lib/auth";
+import { useQueryClient } from "@tanstack/react-query";
+
+import { SidebarWalletBadge } from "@/components/credit-wallet";
+import { supabase } from "@/integrations/supabase/client";
+import { displayNameFor, useSession } from "@/lib/auth";
 
 const navItems = [
   { to: "/cockpit", label: "Tenant & Connection Hub", icon: Plug },
@@ -55,27 +59,16 @@ export function DashboardLayout({
 }) {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const navigate = useNavigate();
-  const [authed, setAuthed] = useState<boolean | null>(null);
+  const queryClient = useQueryClient();
+  const { user, loading } = useSession();
   const [founderOpen, setFounderOpen] = useState(false);
-  const email = getUserEmail() ?? "guest@klyro.ai";
-  const nameParts = (email.split("@")[0] ?? "")
-    .split(/[._-]/)
-    .filter(Boolean)
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1));
-  const displayName = nameParts.join(" ") || "Klyro User";
-  const initials = nameParts
-    .map((p) => p.charAt(0))
-    .slice(0, 2)
-    .join("")
-    .toUpperCase() || "KU";
+  const { email, displayName, initials } = displayNameFor(user);
 
   useEffect(() => {
-    const ok = isSignedIn();
-    setAuthed(ok);
-    if (!ok) navigate({ to: "/", replace: true });
-  }, [navigate]);
+    if (!loading && !user) navigate({ to: "/login", replace: true });
+  }, [loading, user, navigate]);
 
-  if (!authed) {
+  if (loading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
         Verifying session…
@@ -83,9 +76,11 @@ export function DashboardLayout({
     );
   }
 
-  const handleSignOut = () => {
-    signOut();
-    navigate({ to: "/", replace: true });
+  const handleSignOut = async () => {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/login", replace: true });
   };
 
   return (
@@ -117,6 +112,7 @@ export function DashboardLayout({
           })}
         </nav>
         <div className="space-y-3 border-t border-sidebar-border p-4 text-xs text-muted-foreground">
+          <SidebarWalletBadge />
           <button
             onClick={() => setFounderOpen(true)}
             className="flex w-full items-center gap-2 rounded-sm border border-primary/40 bg-primary/5 px-3 py-2.5 text-left text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
@@ -161,9 +157,6 @@ export function DashboardLayout({
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <UserRound className="mr-2 h-4 w-4" /> Profile & identity
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <ShieldCheck className="mr-2 h-4 w-4" /> Google SSO — connected
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" /> SSO & SAML settings

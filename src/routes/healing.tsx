@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CircuitBoard, GitCompareArrows, Zap } from "lucide-react";
+import { CircuitBoard, GitCompareArrows, Loader2, Zap } from "lucide-react";
 
+import { CreditsExhaustedBanner, useAiAction } from "@/components/credit-wallet";
 import { DashboardLayout } from "@/components/dashboard-layout";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
@@ -74,17 +76,38 @@ const payloadAfter = `{
 }`;
 
 function Healing() {
+  const ai = useAiAction();
+
   return (
     <DashboardLayout
       title="Autonomous Healing"
       description="Agent-applied payload corrections, resilience state and semantic mapping trace"
     >
+      {ai.exhausted ? (
+        <div className="mb-6">
+          <CreditsExhaustedBanner />
+        </div>
+      ) : null}
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-6">
           <section className="panel p-5">
             <div className="flex items-center gap-2 text-sm font-semibold">
               <GitCompareArrows className="h-4 w-4 text-primary" />
               AI-corrected payload · AGAS9tqK1_zX1nP4gH6
+              <Button
+                size="sm"
+                className="ml-auto"
+                disabled={ai.exhausted || ai.running !== null}
+                onClick={() => ai.run("Heal Payload", 1.25)}
+              >
+                {ai.running === "Heal Payload" ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Zap className="mr-2 h-4 w-4" />
+                )}
+                Heal Payload
+              </Button>
             </div>
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div>
