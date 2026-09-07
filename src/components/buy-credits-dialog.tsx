@@ -100,6 +100,31 @@ export function CreditPackagesGrid() {
   );
 }
 
+const TIERS = [
+  {
+    name: "Starter",
+    price: "$15",
+    credits: "15 credits",
+    description: "Perfect for evaluation and small tenants.",
+    features: ["15 Klyro Recovery Credits", "Email support", "2-day usage history"],
+  },
+  {
+    name: "Pro",
+    price: "$50",
+    credits: "50 credits",
+    description: "For production integration teams.",
+    features: ["50 Klyro Recovery Credits", "Priority support", "30-day usage history"],
+    highlighted: true,
+  },
+  {
+    name: "Enterprise",
+    price: "$100",
+    credits: "100 credits",
+    description: "High-volume autonomous healing.",
+    features: ["100 Klyro Recovery Credits", "Dedicated support", "Full audit history"],
+  },
+];
+
 export function BuyCreditsDialog({
   open,
   onOpenChange,
@@ -109,14 +134,55 @@ export function BuyCreditsDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-lg">Purchase Klyro Recovery Credits</DialogTitle>
+      <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
+        <DialogHeader className="text-center">
+          <DialogTitle className="text-lg">Choose a Credit Plan</DialogTitle>
           <DialogDescription>
-            Credits are consumed by autonomous analysis, healing and re-trigger actions.
+            Select the right amount of Klyro Recovery Credits for your SAP Integration Suite operations.
           </DialogDescription>
         </DialogHeader>
-        <CreditPackagesGrid />
+        <div className="grid gap-4 pt-2 sm:grid-cols-3">
+          {TIERS.map((tier) => (
+            <div
+              key={tier.name}
+              className={`flex flex-col rounded-sm border p-5 ${
+                tier.highlighted
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-card"
+              }`}
+            >
+              <div className="mb-4">
+                <h3 className="text-sm font-semibold text-foreground">{tier.name}</h3>
+                <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
+                  {tier.price}
+                </p>
+                <p className="text-sm text-muted-foreground">{tier.credits}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{tier.description}</p>
+              </div>
+              <ul className="mb-6 space-y-2">
+                {tier.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2 text-xs text-foreground">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                asChild
+                variant={tier.highlighted ? "default" : "outline"}
+                className="mt-auto w-full"
+              >
+                <a
+                  href="https://example.com/checkout"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Select Plan
+                </a>
+              </Button>
+            </div>
+          ))}
+        </div>
       </DialogContent>
     </Dialog>
   );
