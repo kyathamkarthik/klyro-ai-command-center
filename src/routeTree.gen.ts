@@ -14,6 +14,7 @@ import { Route as BillingRouteImport } from './routes/billing'
 import { Route as CockpitRouteImport } from './routes/cockpit'
 import { Route as EscalationRouteImport } from './routes/escalation'
 import { Route as HealingRouteImport } from './routes/healing'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ObserverRouteImport } from './routes/observer'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const HealingRoute = HealingRouteImport.update({
   path: '/healing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ObserverRoute = ObserverRouteImport.update({
   id: '/observer',
   path: '/observer',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/cockpit': typeof CockpitRoute
   '/escalation': typeof EscalationRoute
   '/healing': typeof HealingRoute
+  '/login': typeof LoginRoute
   '/observer': typeof ObserverRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/cockpit': typeof CockpitRoute
   '/escalation': typeof EscalationRoute
   '/healing': typeof HealingRoute
+  '/login': typeof LoginRoute
   '/observer': typeof ObserverRoute
 }
 export interface FileRoutesById {
@@ -70,14 +78,28 @@ export interface FileRoutesById {
   '/cockpit': typeof CockpitRoute
   '/escalation': typeof EscalationRoute
   '/healing': typeof HealingRoute
+  '/login': typeof LoginRoute
   '/observer': typeof ObserverRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/billing' | '/cockpit' | '/escalation' | '/healing' | '/observer'
+    | '/'
+    | '/billing'
+    | '/cockpit'
+    | '/escalation'
+    | '/healing'
+    | '/login'
+    | '/observer'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/billing' | '/cockpit' | '/escalation' | '/healing' | '/observer'
+  to:
+    | '/'
+    | '/billing'
+    | '/cockpit'
+    | '/escalation'
+    | '/healing'
+    | '/login'
+    | '/observer'
   id:
     | '__root__'
     | '/'
@@ -85,6 +107,7 @@ export interface FileRouteTypes {
     | '/cockpit'
     | '/escalation'
     | '/healing'
+    | '/login'
     | '/observer'
   fileRoutesById: FileRoutesById
 }
@@ -94,6 +117,7 @@ export interface RootRouteChildren {
   CockpitRoute: typeof CockpitRoute
   EscalationRoute: typeof EscalationRoute
   HealingRoute: typeof HealingRoute
+  LoginRoute: typeof LoginRoute
   ObserverRoute: typeof ObserverRoute
 }
 
@@ -134,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HealingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/observer': {
       id: '/observer'
       path: '/observer'
@@ -150,6 +181,7 @@ const rootRouteChildren: RootRouteChildren = {
   CockpitRoute: CockpitRoute,
   EscalationRoute: EscalationRoute,
   HealingRoute: HealingRoute,
+  LoginRoute: LoginRoute,
   ObserverRoute: ObserverRoute,
 }
 export const routeTree = rootRouteImport
