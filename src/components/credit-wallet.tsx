@@ -1,5 +1,6 @@
 import { AlertTriangle, Wallet } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { BuyCreditsDialog } from "@/components/buy-credits-dialog";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { useSession } from "@/lib/auth";
 import {
+  consumeCredits,
   EXHAUSTED_THRESHOLD,
   formatCredits,
   useTransactions,
@@ -143,4 +145,26 @@ export function SidebarWalletBadge() {
       <Progress value={percent} className="mt-2 h-1.5" />
     </div>
   );
+}
+
+/** Runs a credit-consuming AI action, debiting the wallet on success. */
+export function useAiAction() {
+  const { userId, balance, exhausted, isLoading } = useCreditGuard();
+  const [running, setRunning] = useState<string | null>(null);
+
+  const run = async (feature: string, cost: number, work?: () => Promise<void>) => {
+    if (!userId || exhausted) return;
+    setRunning(feature);
+    try {
+      if (work) await work();
+      await consumeCredits(userId, feature, cost, balance);
+      toast.success(`${feature} complete · ${formatCredits(cost)} credits used`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : `${feature} failed`);
+    } finally {
+      setRunning(null);
+    }
+  };
+
+  return { run, running, exhausted, isLoading, balance };
 }
