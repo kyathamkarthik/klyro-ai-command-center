@@ -123,14 +123,26 @@ export function LoginScreen() {
               variant="outline"
               className="w-full"
               disabled={busy !== null}
-              onClick={signInWithGoogle}
+              onClick={() => signInWithProvider("google")}
             >
               {busy === "google" ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
               Continue with Google
             </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={busy !== null}
+              onClick={() => signInWithProvider("github")}
+            >
+              {busy === "github" ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              Continue with GitHub
+            </Button>
           </div>
+
 
           <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-widest text-muted-foreground">
             <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
