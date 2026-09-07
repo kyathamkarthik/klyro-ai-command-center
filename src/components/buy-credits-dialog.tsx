@@ -1,5 +1,5 @@
 import { Loader2, Sparkles } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,20 +10,17 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useCreditPackages, type CreditPackage } from "@/lib/wallet";
 
 const TIER_ORDER = ["Starter", "Pro", "Business", "Enterprise"];
 
 export function BuyCreditsDialog({
-  trigger,
   open,
   onOpenChange,
 }: {
-  trigger?: ReactNode;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }) {
   const { data: packages, isLoading } = useCreditPackages();
   const [pending, setPending] = useState<string | null>(null);
@@ -51,7 +48,6 @@ export function BuyCreditsDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg">Purchase Klyro Recovery Credits</DialogTitle>
