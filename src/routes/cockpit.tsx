@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Loader2, Lock, RefreshCw } from "lucide-react";
+import { CheckCircle2, Loader2, Lock, RefreshCw, Sparkles } from "lucide-react";
 import { useState } from "react";
 
+import {
+  CreditsExhaustedBanner,
+  useAiAction,
+  WalletSummaryCard,
+} from "@/components/credit-wallet";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,6 +43,7 @@ function TenantHub() {
   const [env, setEnv] = useState("prod");
   const [connecting, setConnecting] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const ai = useAiAction();
   const [tenant, setTenant] = useState("klyro-prd-it-cpi012");
   const [clientId, setClientId] = useState("sb-6b1e9a0f!b12345|it-rt-klyro-prd");
   const [secret, setSecret] = useState("a4f9-cc21-77bd-9f30-e1aa");
@@ -88,6 +94,16 @@ function TenantHub() {
       title="Tenant & Connection Hub"
       description="OAuth client credentials for SAP Integration Suite runtime and OData APIs"
     >
+      {ai.exhausted ? (
+        <div className="mb-6">
+          <CreditsExhaustedBanner />
+        </div>
+      ) : null}
+
+      <div className="mb-6">
+        <WalletSummaryCard />
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section className="panel p-6">
           <h2 className="text-sm font-semibold text-foreground">Tenant credentials</h2>
@@ -161,9 +177,18 @@ function TenantHub() {
               )}
               {connecting ? "Connecting…" : "Connect"}
             </Button>
-            <span className="text-xs text-muted-foreground">
-              Last handshake 3 min ago · token TTL 11h 42m
-            </span>
+            <Button
+              variant="outline"
+              disabled={ai.exhausted || ai.running !== null}
+              onClick={() => ai.run("Analyze CPI Failure", 0.75)}
+            >
+              {ai.running === "Analyze CPI Failure" ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="mr-2 h-4 w-4" />
+              )}
+              Analyze CPI Failure
+            </Button>
           </div>
           {result && (
             <p

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Check, Clock, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 
+import { CreditsExhaustedBanner, useCreditGuard } from "@/components/credit-wallet";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -222,7 +223,7 @@ function Escalation() {
               >
                 <X className="mr-2 h-4 w-4" /> Reject
               </Button>
-              <Button onClick={approve} disabled={pending}>
+              <Button onClick={approve} disabled={pending || exhausted}>
                 <Check className="mr-2 h-4 w-4" />
                 {pending ? "Re-triggering…" : "Approve & Re-trigger"}
               </Button>
