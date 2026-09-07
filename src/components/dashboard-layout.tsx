@@ -34,7 +34,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { SidebarWalletBadge } from "@/components/credit-wallet";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/external/client";
 import { displayNameFor, useSession } from "@/lib/auth";
 
 const navItems = [
