@@ -167,7 +167,7 @@ export function SidebarWalletBadge() {
   );
 }
 
-/** Runs a credit-consuming AI action, debiting the wallet on success. */
+/** Runs an API Quota-consuming AI action, debiting the usage limit on success. */
 export function useAiAction() {
   const { userId, balance, exhausted, isLoading } = useCreditGuard();
   const [running, setRunning] = useState<string | null>(null);

@@ -29,7 +29,7 @@ export function CreditPackagesGrid() {
     try {
       if (pkg.is_custom) {
         window.location.href =
-          "mailto:sales@klyro.ai?subject=Klyro%20Enterprise%20Credits";
+          "mailto:sales@klyro.ai?subject=Klyro%20Enterprise%20API%20Quota";
         return;
       }
       toast.info(
