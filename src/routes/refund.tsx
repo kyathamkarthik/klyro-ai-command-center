@@ -7,13 +7,13 @@ export const Route = createFileRoute("/refund")({
       {
         name: "description",
         content:
-          "Cancellation and Refund Policy for Klyro AI credits and subscription tiers.",
+          "Cancellation and Refund Policy for Klyro AI API Quota and subscription tiers.",
       },
       { property: "og:title", content: "Cancellation & Refund Policy | Klyro AI" },
       {
         property: "og:description",
         content:
-          "Learn how Klyro AI handles refunds for consumed and unused credits.",
+          "Learn how Klyro AI handles refunds for consumed and unused API Quota.",
       },
     ],
   }),
@@ -42,13 +42,13 @@ function RefundPage() {
 
           <div className="mt-8 space-y-8 text-sm leading-relaxed text-foreground">
             <section>
-              <h2 className="text-base font-semibold">1. Consumed Credits</h2>
+              <h2 className="text-base font-semibold">1. Consumed API Quota</h2>
               <p className="mt-2 text-muted-foreground">
                 <strong className="text-foreground">
-                  Credits consumed for diagnostic analysis or payload correction
+                  API Quota consumed for diagnostic analysis or payload correction
                   are strictly non-refundable.
                 </strong>{" "}
-                Once a credit has been debited for an AI operation, heuristic
+                Once API Quota has been debited for an AI operation, heuristic
                 review, or retriggered integration action, the service has been
                 rendered and no refund will be issued.
               </p>
@@ -56,10 +56,10 @@ function RefundPage() {
 
             <section>
               <h2 className="text-base font-semibold">
-                2. Unused Credit Balances
+                2. Unused API Quota Balances
               </h2>
               <p className="mt-2 text-muted-foreground">
-                Unused credit balances from Starter or Growth tiers may be
+                Unused API Quota balances from Starter or Growth tiers may be
                 requested for refund within{" "}
                 <strong className="text-foreground">
                   7 calendar days of the initial purchase

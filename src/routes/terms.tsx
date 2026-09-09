@@ -7,7 +7,7 @@ export const Route = createFileRoute("/terms")({
       {
         name: "description",
         content:
-          "Terms of Service for Klyro AI, operated by Klyro Technologies. Read about usage, Klyro Credits, and service limits.",
+          "Terms of Service for Klyro AI, operated by Klyro Technologies. Read about usage, API Quota, and service limits.",
       },
       { property: "og:title", content: "Terms of Service | Klyro AI" },
       {
@@ -75,15 +75,15 @@ function TermsPage() {
 
             <section>
               <h2 className="text-base font-semibold">
-                4. Klyro Credits Are Utility Tokens
+                4. API Quota
               </h2>
               <p className="mt-2 text-muted-foreground">
                 <strong className="text-foreground">
-                  Klyro Credits are strictly utility tokens
+                  API Quota is a usage allowance
                 </strong>{" "}
                 used to invoke diagnostic and remediation services within the
-                platform. Credits have no cash value outside the Klyro AI
-                service, are non-transferable, and cannot be redeemed for cash
+                platform. API Quota has no cash value outside the Klyro AI
+                service, is non-transferable, and cannot be redeemed for cash
                 except as expressly permitted under our Cancellation & Refund
                 Policy.
               </p>
