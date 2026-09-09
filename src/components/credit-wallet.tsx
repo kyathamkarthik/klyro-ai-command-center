@@ -57,8 +57,10 @@ export function CreditsExhaustedBanner() {
 export function WalletSummaryCard() {
   const { user } = useSession();
   const { data: wallet, isLoading } = useWallet(user?.id);
-  const { data: transactions } = useTransactions(user?.id);
+  const { data: transactions, isLoading: txsLoading } = useTransactions(user?.id);
   const [buyOpen, setBuyOpen] = useState(false);
+
+  const txs = transactions ?? [];
 
   const balance = Number(wallet?.current_balance ?? 0);
   const total = Number(wallet?.total_purchased ?? 0);
