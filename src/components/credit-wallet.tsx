@@ -54,6 +54,15 @@ export function CreditsExhaustedBanner() {
   );
 }
 
+function descriptionForFeature(feature: string): string {
+  const map: Record<string, string> = {
+    "Analyze CPI Failure": "AI analysis of a failed SAP CPI message",
+    "Heal Payload": "Semantic correction and payload healing",
+    "Approve & Re-trigger": "HITL-approved re-trigger of SAP flow",
+  };
+  return map[feature] ?? feature;
+}
+
 export function WalletSummaryCard() {
   const { user } = useSession();
   const { data: wallet, isLoading } = useWallet(user?.id);
