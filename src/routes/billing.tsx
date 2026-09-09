@@ -29,7 +29,7 @@ function Billing() {
   return (
     <DashboardLayout
       title="Billing & Plans"
-      description="Klyro Recovery Credits balance, usage history and credit packages"
+      description="API Quota balance, usage history and API Quota packages"
     >
       <div className="space-y-6">
         <WalletSummaryCard />

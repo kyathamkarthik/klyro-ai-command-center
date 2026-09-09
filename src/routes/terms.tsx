@@ -69,7 +69,7 @@ function TermsPage() {
                 You agree to use Klyro AI only in compliance with applicable laws
                 and the terms of any third-party systems you connect. You are
                 responsible for maintaining the confidentiality of your tenant
-                credentials, API keys, and service-account tokens.
+                credentials, API keys, and service-account credentials.
               </p>
             </section>
 
