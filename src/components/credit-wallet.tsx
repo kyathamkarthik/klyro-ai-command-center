@@ -105,19 +105,28 @@ export function WalletSummaryCard() {
             Last 10 credit-consuming actions on this account.
           </p>
         </div>
-        {transactions && transactions.length > 0 ? (
+        {txsLoading ? (
+          <div className="flex flex-col items-center justify-center gap-2 px-5 py-10">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">Loading activity…</p>
+          </div>
+        ) : txs.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Action / Feature</TableHead>
+                <TableHead>Action</TableHead>
+                <TableHead>Description</TableHead>
                 <TableHead>Credits Used</TableHead>
                 <TableHead>Timestamp</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.map((tx) => (
+              {txs.map((tx) => (
                 <TableRow key={tx.id}>
-                  <TableCell className="text-sm">{tx.feature}</TableCell>
+                  <TableCell className="text-sm font-medium">{tx.feature}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {descriptionForFeature(tx.feature)}
+                  </TableCell>
                   <TableCell className="font-mono text-sm text-destructive">
                     -{formatCredits(tx.credits_used)}
                   </TableCell>
