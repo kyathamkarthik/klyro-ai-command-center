@@ -1,4 +1,4 @@
-import { AlertTriangle, Wallet } from "lucide-react";
+import { AlertTriangle, Loader2, Wallet } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
