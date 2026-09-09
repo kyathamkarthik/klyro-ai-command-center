@@ -1,4 +1,4 @@
-import { AlertTriangle, Wallet } from "lucide-react";
+import { AlertTriangle, Loader2, Wallet } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -54,11 +54,22 @@ export function CreditsExhaustedBanner() {
   );
 }
 
+function descriptionForFeature(feature: string): string {
+  const map: Record<string, string> = {
+    "Analyze CPI Failure": "AI analysis of a failed SAP CPI message",
+    "Heal Payload": "Semantic correction and payload healing",
+    "Approve & Re-trigger": "HITL-approved re-trigger of SAP flow",
+  };
+  return map[feature] ?? feature;
+}
+
 export function WalletSummaryCard() {
   const { user } = useSession();
   const { data: wallet, isLoading } = useWallet(user?.id);
-  const { data: transactions } = useTransactions(user?.id);
+  const { data: transactions, isLoading: txsLoading } = useTransactions(user?.id);
   const [buyOpen, setBuyOpen] = useState(false);
+
+  const txs = transactions ?? [];
 
   const balance = Number(wallet?.current_balance ?? 0);
   const total = Number(wallet?.total_purchased ?? 0);
@@ -94,19 +105,28 @@ export function WalletSummaryCard() {
             Last 10 credit-consuming actions on this account.
           </p>
         </div>
-        {transactions && transactions.length > 0 ? (
+        {txsLoading ? (
+          <div className="flex flex-col items-center justify-center gap-2 px-5 py-10">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">Loading activity…</p>
+          </div>
+        ) : txs.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Action / Feature</TableHead>
+                <TableHead>Action</TableHead>
+                <TableHead>Description</TableHead>
                 <TableHead>Credits Used</TableHead>
                 <TableHead>Timestamp</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {transactions.map((tx) => (
+              {txs.map((tx) => (
                 <TableRow key={tx.id}>
-                  <TableCell className="text-sm">{tx.feature}</TableCell>
+                  <TableCell className="text-sm font-medium">{tx.feature}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {descriptionForFeature(tx.feature)}
+                  </TableCell>
                   <TableCell className="font-mono text-sm text-destructive">
                     -{formatCredits(tx.credits_used)}
                   </TableCell>
