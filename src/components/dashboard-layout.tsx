@@ -34,6 +34,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 
 import { SidebarWalletBadge } from "@/components/credit-wallet";
+import { SiteFooter } from "@/components/site-footer";
 import { supabase } from "@/integrations/external/client";
 import { displayNameFor, useSession } from "@/lib/auth";
 
@@ -188,6 +189,7 @@ export function DashboardLayout({
         </div>
 
         <main className="flex-1 p-6">{children}</main>
+        <SiteFooter />
       </div>
 
       <Dialog open={founderOpen} onOpenChange={setFounderOpen}>
