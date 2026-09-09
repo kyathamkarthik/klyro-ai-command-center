@@ -188,7 +188,7 @@ export function LoginScreen() {
           </div>
 
           <p className="mt-6 text-center text-[11px] text-muted-foreground">
-            New accounts start with 15.00 Klyro Recovery Credits.
+            New accounts start with 15.00 API Quota.
           </p>
           <button
             onClick={() => setFounderOpen(true)}
