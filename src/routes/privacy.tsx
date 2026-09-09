@@ -57,7 +57,7 @@ function PrivacyPage() {
               </h2>
               <p className="mt-2 text-muted-foreground">
                 <strong className="text-foreground">
-                  Sensitive PII — including passwords, financial data,
+                  Sensitive PII — including passwords, tokens, financial data,
                   and email addresses — is automatically sanitized on the
                   client/middleware layer
                 </strong>{" "}

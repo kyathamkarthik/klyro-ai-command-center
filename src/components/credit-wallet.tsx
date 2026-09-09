@@ -42,12 +42,12 @@ export function CreditsExhaustedBanner() {
       <div className="flex items-start gap-2">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
         <p className="text-sm text-foreground">
-          Your API Quota is exhausted. Please subscribe to additional API Quota
+          Your Klyro Recovery Credits are exhausted. Please purchase additional credits
           to continue.
         </p>
       </div>
       <Button size="sm" onClick={() => setOpen(true)}>
-        Subscribe
+        Buy More Credits
       </Button>
       <BuyCreditsDialog open={open} onOpenChange={setOpen} />
     </div>
@@ -81,17 +81,17 @@ export function WalletSummaryCard() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-              <Wallet className="h-3.5 w-3.5" /> API Usage Limit
+              <Wallet className="h-3.5 w-3.5" /> Credit Wallet
             </p>
             <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-              {isLoading ? "—" : `${formatCredits(balance)} API Quota`}
+              {isLoading ? "—" : `${formatCredits(balance)} Klyro Recovery Credits`}
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              {formatCredits(balance)} of {formatCredits(total)} API Quota remaining
+              {formatCredits(balance)} of {formatCredits(total)} credits remaining
             </p>
           </div>
           <Button size="sm" variant="outline" onClick={() => setBuyOpen(true)}>
-            Subscribe
+            Buy More Credits
           </Button>
         </div>
         <Progress value={percent} className="mt-4 h-2" />
@@ -102,7 +102,7 @@ export function WalletSummaryCard() {
         <div className="border-b border-border px-5 py-3">
           <h3 className="text-sm font-semibold text-foreground">Recent Usage</h3>
           <p className="text-xs text-muted-foreground">
-            Last 10 API Quota-consuming actions on this account.
+            Last 10 credit-consuming actions on this account.
           </p>
         </div>
         {txsLoading ? (
@@ -116,7 +116,7 @@ export function WalletSummaryCard() {
               <TableRow>
                 <TableHead>Action</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead>Quota Used</TableHead>
+                <TableHead>Credits Used</TableHead>
                 <TableHead>Timestamp</TableHead>
               </TableRow>
             </TableHeader>
@@ -157,17 +157,17 @@ export function SidebarWalletBadge() {
   return (
     <div className="rounded-sm border border-sidebar-border bg-sidebar-accent/40 p-3">
       <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-        API Usage Limit
+        Credit Wallet
       </p>
       <p className="mt-1 text-sm font-semibold text-foreground">
-        {formatCredits(balance)} API Quota
+        {formatCredits(balance)} Klyro Recovery Credits
       </p>
       <Progress value={percent} className="mt-2 h-1.5" />
     </div>
   );
 }
 
-/** Runs an API Quota-consuming AI action, debiting the usage limit on success. */
+/** Runs a credit-consuming AI action, debiting the wallet on success. */
 export function useAiAction() {
   const { userId, balance, exhausted, isLoading } = useCreditGuard();
   const [running, setRunning] = useState<string | null>(null);
@@ -178,7 +178,7 @@ export function useAiAction() {
     try {
       if (work) await work();
       await consumeCredits(userId, feature, cost, balance);
-      toast.success(`${feature} complete · ${formatCredits(cost)} API Quota used`);
+      toast.success(`${feature} complete · ${formatCredits(cost)} credits used`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : `${feature} failed`);
     } finally {
