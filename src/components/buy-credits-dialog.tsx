@@ -55,7 +55,7 @@ export function CreditPackagesGrid() {
           <div className="mb-3 flex items-center gap-2">
             <h3 className="text-sm font-semibold text-foreground">{group.tier}</h3>
             <Badge variant="outline" className="rounded-sm text-[10px]">
-              {group.tier === "Enterprise" ? "Custom agreement" : "Instant top-up"}
+              {group.tier === "Enterprise" ? "Custom agreement" : "Instant subscribe"}
             </Badge>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -71,7 +71,7 @@ export function CreditPackagesGrid() {
                   <p className="mt-1 text-xs text-muted-foreground">
                     {pkg.is_custom
                       ? "Volume pricing & SLA"
-                      : `${Number(pkg.credits).toLocaleString()} Klyro Recovery Credits`}
+                      : `${Number(pkg.credits).toLocaleString()} API Quota`}
                   </p>
                 </div>
                 <Button
@@ -87,7 +87,7 @@ export function CreditPackagesGrid() {
                     "Contact Sales"
                   ) : (
                     <>
-                      <Sparkles className="mr-1.5 h-3.5 w-3.5" /> Buy
+                      <Sparkles className="mr-1.5 h-3.5 w-3.5" /> Subscribe
                     </>
                   )}
                 </Button>
@@ -104,24 +104,24 @@ const TIERS = [
   {
     name: "Starter",
     price: "$15",
-    credits: "15 credits",
+    credits: "15 API Quota",
     description: "Perfect for evaluation and small tenants.",
-    features: ["15 Klyro Recovery Credits", "Email support", "2-day usage history"],
+    features: ["15 API Quota", "Email support", "2-day usage history"],
   },
   {
     name: "Pro",
     price: "$50",
-    credits: "50 credits",
+    credits: "50 API Quota",
     description: "For production integration teams.",
-    features: ["50 Klyro Recovery Credits", "Priority support", "30-day usage history"],
+    features: ["50 API Quota", "Priority support", "30-day usage history"],
     highlighted: true,
   },
   {
     name: "Enterprise",
     price: "$100",
-    credits: "100 credits",
+    credits: "100 API Quota",
     description: "High-volume autonomous healing.",
-    features: ["100 Klyro Recovery Credits", "Dedicated support", "Full audit history"],
+    features: ["100 API Quota", "Dedicated support", "Full audit history"],
   },
 ];
 
@@ -136,9 +136,9 @@ export function BuyCreditsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
         <DialogHeader className="text-center">
-          <DialogTitle className="text-lg">Choose a Credit Plan</DialogTitle>
+          <DialogTitle className="text-lg">Choose an API Quota Plan</DialogTitle>
           <DialogDescription>
-            Select the right amount of Klyro Recovery Credits for your SAP Integration Suite operations.
+            Select the right amount of API Quota for your SAP Integration Suite operations.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 pt-2 sm:grid-cols-3">
