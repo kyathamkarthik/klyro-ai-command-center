@@ -8,6 +8,8 @@ import {
   Wand2,
 } from "lucide-react";
 
+import { SiteFooter } from "@/components/site-footer";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -188,15 +190,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50/60">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
-          <img src="/logo.png" alt="Klyro AI" className="h-7 w-auto" />
-          <p className="text-xs text-slate-500">
-            © 2026 Klyro AI. Autonomous recovery for SAP Integration Suite.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

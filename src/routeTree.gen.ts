@@ -12,10 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BillingRouteImport } from './routes/billing'
 import { Route as CockpitRouteImport } from './routes/cockpit'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as EscalationRouteImport } from './routes/escalation'
 import { Route as HealingRouteImport } from './routes/healing'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ObserverRouteImport } from './routes/observer'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RefundRouteImport } from './routes/refund'
+import { Route as TermsRouteImport } from './routes/terms'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +34,11 @@ const BillingRoute = BillingRouteImport.update({
 const CockpitRoute = CockpitRouteImport.update({
   id: '/cockpit',
   path: '/cockpit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EscalationRoute = EscalationRouteImport.update({
@@ -52,34 +61,61 @@ const ObserverRoute = ObserverRouteImport.update({
   path: '/observer',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/billing': typeof BillingRoute
   '/cockpit': typeof CockpitRoute
+  '/contact': typeof ContactRoute
   '/escalation': typeof EscalationRoute
   '/healing': typeof HealingRoute
   '/login': typeof LoginRoute
   '/observer': typeof ObserverRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/terms': typeof TermsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/billing': typeof BillingRoute
   '/cockpit': typeof CockpitRoute
+  '/contact': typeof ContactRoute
   '/escalation': typeof EscalationRoute
   '/healing': typeof HealingRoute
   '/login': typeof LoginRoute
   '/observer': typeof ObserverRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/terms': typeof TermsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/billing': typeof BillingRoute
   '/cockpit': typeof CockpitRoute
+  '/contact': typeof ContactRoute
   '/escalation': typeof EscalationRoute
   '/healing': typeof HealingRoute
   '/login': typeof LoginRoute
   '/observer': typeof ObserverRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
+  '/terms': typeof TermsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,38 +123,54 @@ export interface FileRouteTypes {
     | '/'
     | '/billing'
     | '/cockpit'
+    | '/contact'
     | '/escalation'
     | '/healing'
     | '/login'
     | '/observer'
+    | '/privacy'
+    | '/refund'
+    | '/terms'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/billing'
     | '/cockpit'
+    | '/contact'
     | '/escalation'
     | '/healing'
     | '/login'
     | '/observer'
+    | '/privacy'
+    | '/refund'
+    | '/terms'
   id:
     | '__root__'
     | '/'
     | '/billing'
     | '/cockpit'
+    | '/contact'
     | '/escalation'
     | '/healing'
     | '/login'
     | '/observer'
+    | '/privacy'
+    | '/refund'
+    | '/terms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BillingRoute: typeof BillingRoute
   CockpitRoute: typeof CockpitRoute
+  ContactRoute: typeof ContactRoute
   EscalationRoute: typeof EscalationRoute
   HealingRoute: typeof HealingRoute
   LoginRoute: typeof LoginRoute
   ObserverRoute: typeof ObserverRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RefundRoute: typeof RefundRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -142,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/cockpit'
       fullPath: '/cockpit'
       preLoaderRoute: typeof CockpitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/escalation': {
@@ -172,6 +231,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ObserverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -179,10 +259,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BillingRoute: BillingRoute,
   CockpitRoute: CockpitRoute,
+  ContactRoute: ContactRoute,
   EscalationRoute: EscalationRoute,
   HealingRoute: HealingRoute,
   LoginRoute: LoginRoute,
   ObserverRoute: ObserverRoute,
+  PrivacyRoute: PrivacyRoute,
+  RefundRoute: RefundRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
