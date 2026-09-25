@@ -37,10 +37,11 @@ export function useWallet(userId: string | undefined) {
     enabled: Boolean(userId),
     refetchOnWindowFocus: true,
     queryFn: async (): Promise<Wallet | null> => {
+      if (!userId) return null;
       const { data, error } = await supabase
         .from("credit_wallets")
         .select("id,user_id,current_balance,total_purchased")
-        .eq("user_id", userId!)
+        .eq("user_id", userId)
         .maybeSingle();
       if (error) throw error;
       return data as Wallet | null;
@@ -126,6 +127,10 @@ export function useCreditPackages() {
 
 export function formatCredits(value: number | null | undefined) {
   return (Number(value ?? 0)).toFixed(2);
+}
+
+export function formatWalletBalance(value: number | null | undefined) {
+  return Number(value ?? 0).toFixed(4);
 }
 
 /** Records a credit-consuming AI operation and debits the wallet. */

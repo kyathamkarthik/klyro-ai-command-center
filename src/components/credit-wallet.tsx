@@ -18,6 +18,7 @@ import {
   consumeCredits,
   EXHAUSTED_THRESHOLD,
   formatCredits,
+  formatWalletBalance,
   useTransactions,
   useWallet,
 } from "@/lib/wallet";
@@ -65,15 +66,14 @@ function descriptionForFeature(feature: string): string {
 
 export function WalletSummaryCard() {
   const { user } = useSession();
-  const { data: wallet, isLoading } = useWallet(user?.id);
+  const { data: wallet, error: walletError, isLoading } = useWallet(user?.id);
   const { data: transactions, isLoading: txsLoading } = useTransactions(user?.id);
   const [buyOpen, setBuyOpen] = useState(false);
 
   const txs = transactions ?? [];
 
   const balance = Number(wallet?.current_balance ?? 0);
-  const total = Number(wallet?.total_purchased ?? 0);
-  const percent = total > 0 ? Math.min(100, (balance / total) * 100) : 0;
+  const lowBalance = !isLoading && !walletError && balance <= EXHAUSTED_THRESHOLD;
 
   return (
     <div className="space-y-4">
@@ -81,20 +81,37 @@ export function WalletSummaryCard() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-              <Wallet className="h-3.5 w-3.5" /> Credit Wallet
+              <Wallet className="h-3.5 w-3.5" /> API Usage Limit
             </p>
-            <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-              {isLoading ? "—" : `${formatCredits(balance)} Klyro Recovery Credits`}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {formatCredits(balance)} of {formatCredits(total)} credits remaining
-            </p>
+            {isLoading ? (
+              <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading credit balance…
+              </div>
+            ) : walletError ? (
+              <div role="alert" className="mt-3 flex items-center gap-2 text-sm text-destructive">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                Credit balance could not be loaded.
+              </div>
+            ) : (
+              <p className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+                {formatWalletBalance(balance)} Klyro Credits remaining
+              </p>
+            )}
           </div>
           <Button size="sm" variant="outline" onClick={() => setBuyOpen(true)}>
             Buy More Credits
           </Button>
         </div>
-        <Progress value={percent} className="mt-4 h-2" />
+        {lowBalance ? (
+          <div
+            role="alert"
+            className="mt-4 flex items-start gap-2 rounded-sm border border-destructive/50 bg-destructive/10 p-3 text-sm font-semibold text-destructive"
+          >
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>Low Balance: Autonomous Healing Paused. Please top-up to resume.</span>
+          </div>
+        ) : null}
         <BuyCreditsDialog open={buyOpen} onOpenChange={setBuyOpen} />
       </div>
 
@@ -149,7 +166,7 @@ export function WalletSummaryCard() {
 
 export function SidebarWalletBadge() {
   const { user } = useSession();
-  const { data: wallet } = useWallet(user?.id);
+  const { data: wallet, isLoading, isError } = useWallet(user?.id);
   const balance = Number(wallet?.current_balance ?? 0);
   const total = Number(wallet?.total_purchased ?? 0);
   const percent = total > 0 ? Math.min(100, (balance / total) * 100) : 0;
@@ -160,7 +177,11 @@ export function SidebarWalletBadge() {
         Credit Wallet
       </p>
       <p className="mt-1 text-sm font-semibold text-foreground">
-        {formatCredits(balance)} Klyro Recovery Credits
+        {isLoading
+          ? "Loading credits…"
+          : isError
+            ? "Credits unavailable"
+            : `${formatWalletBalance(balance)} Klyro Credits remaining`}
       </p>
       <Progress value={percent} className="mt-2 h-1.5" />
     </div>
