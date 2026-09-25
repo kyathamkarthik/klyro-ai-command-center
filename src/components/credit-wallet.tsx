@@ -168,7 +168,7 @@ export function SidebarWalletBadge() {
   const { user } = useSession();
   const { data: wallet, isLoading, isError } = useWallet(user?.id);
   const balance = Number(wallet?.current_balance ?? 0);
-  const total = Number(wallet?.total_purchased ?? 0);
+  const total = Number(wallet?.total_credits_purchased ?? 0);
   const percent = total > 0 ? Math.min(100, (balance / total) * 100) : 0;
 
   return (

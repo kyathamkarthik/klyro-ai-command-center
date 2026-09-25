@@ -6,10 +6,11 @@ import { supabase } from "@/integrations/external/client";
 export const EXHAUSTED_THRESHOLD = 0.2;
 
 export type Wallet = {
-  id: string;
+  wallet_id: string;
   user_id: string;
   current_balance: number;
-  total_purchased: number;
+  total_credits_purchased: number;
+  total_credits_used: number;
 };
 
 export type CreditTransaction = {
@@ -40,7 +41,7 @@ export function useWallet(userId: string | undefined) {
       if (!userId) return null;
       const { data, error } = await supabase
         .from("credit_wallets")
-        .select("id,user_id,current_balance,total_purchased")
+        .select("wallet_id, user_id, current_balance, total_credits_purchased, total_credits_used")
         .eq("user_id", userId)
         .maybeSingle();
       if (error) throw error;
@@ -98,10 +99,11 @@ export function useTransactions(userId: string | undefined) {
     enabled: Boolean(userId),
     refetchOnWindowFocus: true,
     queryFn: async (): Promise<CreditTransaction[]> => {
+      if (!userId) return [];
       const { data, error } = await supabase
         .from("credit_transactions")
         .select("id,feature,credits_used,created_at")
-        .eq("user_id", userId!)
+        .eq("user_id", userId)
         .order("created_at", { ascending: false })
         .limit(10);
       if (error) throw error;
