@@ -167,14 +167,15 @@ function Escalation() {
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
       ) : queueError ? (
-        <div role="alert" className="border border-destructive/40 bg-destructive/5 p-6 text-sm text-destructive">
+        <div
+          role="alert"
+          className="border border-destructive/40 bg-destructive/5 p-6 text-sm text-destructive"
+        >
           Pending payloads could not be loaded. Please try again.
         </div>
       ) : pending.length === 0 ? (
         <div className="panel flex items-center justify-center py-24">
-          <p className="text-sm text-muted-foreground">
-            No pending payloads for review.
-          </p>
+          <p className="text-sm text-muted-foreground">No pending payloads for review.</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -189,49 +190,67 @@ function Escalation() {
             const risk = row.risk_level?.toLowerCase() ?? "";
             const confidence = confidenceOf(row);
             return (
-            <section key={row.id} className="panel p-5">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold">
-                    {row.iflow_name ?? "Unknown iFlow"}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground break-words">
-                    {row.error_message ?? "No error message recorded"}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {row.failure_type && <Badge variant="secondary">{row.failure_type}</Badge>}
-                  {row.risk_level && (
-                    <Badge variant="outline" className={riskStyles[risk] ?? "border-border text-muted-foreground"}>
-                      {row.risk_level} risk
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <div className="mt-5 flex flex-wrap items-end justify-between gap-5 border-t border-border pt-4">
-                <div className="w-full max-w-56">
-                  <div className="mb-2 flex justify-between text-xs text-muted-foreground">
-                    <span>AI confidence</span><span>{confidence == null ? "—" : `${Math.round(confidence * 100)}%`}</span>
+              <section key={row.id} className="panel p-5">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">{row.iflow_name ?? "Unknown iFlow"}</p>
+                    <p className="mt-1 text-xs text-muted-foreground break-words">
+                      {row.error_message ?? "No error message recorded"}
+                    </p>
                   </div>
-                  <Progress value={(confidence ?? 0) * 100} className="h-1.5" aria-label="AI confidence" />
+                  <div className="flex flex-wrap gap-2">
+                    {row.failure_type && <Badge variant="secondary">{row.failure_type}</Badge>}
+                    {row.risk_level && (
+                      <Badge
+                        variant="outline"
+                        className={riskStyles[risk] ?? "border-border text-muted-foreground"}
+                      >
+                        {row.risk_level} risk
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-                <Button onClick={() => { setActionError(null); setSelected(row); }}>
-                  Review Fix <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </section>
-          );})}
+                <div className="mt-5 flex flex-wrap items-end justify-between gap-5 border-t border-border pt-4">
+                  <div className="w-full max-w-56">
+                    <div className="mb-2 flex justify-between text-xs text-muted-foreground">
+                      <span>AI confidence</span>
+                      <span>{confidence == null ? "—" : `${Math.round(confidence * 100)}%`}</span>
+                    </div>
+                    <Progress
+                      value={(confidence ?? 0) * 100}
+                      className="h-1.5"
+                      aria-label="AI confidence"
+                    />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setActionError(null);
+                      setSelected(row);
+                    }}
+                  >
+                    Review Fix <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </section>
+            );
+          })}
         </div>
       )}
 
-      <Dialog open={Boolean(selected)} onOpenChange={(open) => { if (!open && !approvingId) setSelected(null); }}>
+      <Dialog
+        open={Boolean(selected)}
+        onOpenChange={(open) => {
+          if (!open && !approvingId) setSelected(null);
+        }}
+      >
         <DialogContent className="flex max-h-[90vh] w-[calc(100vw-2rem)] max-w-6xl flex-col gap-0 overflow-hidden p-0 sm:rounded-md">
           {selected && (
             <>
               <DialogHeader className="shrink-0 border-b border-border px-6 py-5 pr-12">
                 <DialogTitle>Review Fix · {selected.iflow_name ?? "Unknown iFlow"}</DialogTitle>
                 <DialogDescription>
-                  Compare the failed payload with the AI-proposed correction before retriggering SAP.
+                  Compare the failed payload with the AI-proposed correction before retriggering
+                  SAP.
                 </DialogDescription>
               </DialogHeader>
               <div className="min-h-0 flex-1 overflow-auto px-4 py-5 sm:px-6">
@@ -248,15 +267,34 @@ function Escalation() {
                 </div>
               </div>
               <div className="shrink-0 border-t border-border px-6 py-4">
-                {actionError && <p role="alert" className="mb-3 text-sm text-destructive">{actionError}</p>}
+                {actionError && (
+                  <p role="alert" className="mb-3 text-sm text-destructive">
+                    {actionError}
+                  </p>
+                )}
                 <div className="flex flex-wrap items-center justify-end gap-3">
-                  <Button variant="outline" onClick={() => setSelected(null)} disabled={Boolean(approvingId)}>Cancel</Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelected(null)}
+                    disabled={Boolean(approvingId)}
+                  >
+                    Cancel
+                  </Button>
                   <Button
                     className="bg-success text-success-foreground hover:bg-success/90"
-                    disabled={Boolean(approvingId) || exhausted || !userId || selected.proposed_payload == null}
+                    disabled={
+                      Boolean(approvingId) ||
+                      exhausted ||
+                      !userId ||
+                      selected.proposed_payload == null
+                    }
                     onClick={() => approve(selected)}
                   >
-                    {approvingId ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
+                    {approvingId ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Check className="mr-2 h-4 w-4" />
+                    )}
                     {approvingId ? "Retriggering…" : "Approve & Retrigger"}
                   </Button>
                 </div>
