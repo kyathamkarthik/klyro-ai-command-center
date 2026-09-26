@@ -1,3 +1,3 @@
-- [ ] Show structured HITL metadata and confidence in queue items.
-- [ ] Review JSON changes in a side-by-side modal.
-- [ ] Retrigger the approved payload, then remove the item after queue status updates.
+- [x] Show structured HITL metadata and confidence in queue items.
+- [x] Review JSON changes in a side-by-side modal.
+- [x] Retrigger the approved payload, then remove the item after queue status updates.

@@ -116,6 +116,7 @@ function Escalation() {
     if (exhausted || approvingId || !userId || row.proposed_payload == null) return;
     setApprovingId(row.id);
     setActionError(null);
+    let retriggerSucceeded = false;
     try {
       const response = await fetch("https://klyro-backend-spme.onrender.com/api/v1/retrigger-sap", {
         method: "POST",
@@ -128,6 +129,7 @@ function Escalation() {
       if (!response.ok) {
         throw new Error(`SAP retrigger failed (${response.status}). The item is still pending.`);
       }
+      retriggerSucceeded = true;
       const { error } = await supabase
         .from("hitl_queue")
         .update({ status: "approved" })
@@ -145,7 +147,11 @@ function Escalation() {
       }
       void queryClient.invalidateQueries({ queryKey: ["hitl-queue"] });
     } catch (error) {
-      setActionError(`Approval failed: ${(error as Error).message}`);
+      setActionError(
+        retriggerSucceeded
+          ? "SAP retrigger succeeded, but the queue could not be updated. Do not retry this action; contact support to reconcile the item."
+          : `Approval failed: ${(error as Error).message}`,
+      );
     } finally {
       setApprovingId(null);
     }
