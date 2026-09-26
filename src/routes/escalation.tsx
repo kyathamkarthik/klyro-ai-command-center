@@ -108,12 +108,13 @@ function Escalation() {
   const [approvedIds, setApprovedIds] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<HitlRow | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [retriggeredId, setRetriggeredId] = useState<string | null>(null);
   const { userId, balance, exhausted } = useCreditGuard();
 
   const pending = (rows ?? []).filter((r) => !approvedIds.has(r.id));
 
   const approve = async (row: HitlRow) => {
-    if (exhausted || approvingId || !userId || row.proposed_payload == null) return;
+    if (exhausted || approvingId || !userId || row.proposed_payload == null || retriggeredId === row.id) return;
     setApprovingId(row.id);
     setActionError(null);
     let retriggerSucceeded = false;
@@ -130,6 +131,7 @@ function Escalation() {
         throw new Error(`SAP retrigger failed (${response.status}). The item is still pending.`);
       }
       retriggerSucceeded = true;
+      setRetriggeredId(row.id);
       const { error } = await supabase
         .from("hitl_queue")
         .update({ status: "approved" })
@@ -140,6 +142,7 @@ function Escalation() {
       if (error) throw error;
       setApprovedIds((s) => new Set(s).add(row.id));
       setSelected(null);
+      setRetriggeredId(null);
       try {
         await consumeCredits(userId, "Approve & Retrigger", 0.5, balance);
       } catch {
@@ -292,7 +295,8 @@ function Escalation() {
                       Boolean(approvingId) ||
                       exhausted ||
                       !userId ||
-                      selected.proposed_payload == null
+                       selected.proposed_payload == null ||
+                       retriggeredId === selected.id
                     }
                     onClick={() => approve(selected)}
                   >
