@@ -1,12 +1,21 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Check, Loader2, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Loader2 } from "lucide-react";
 import { useState } from "react";
+import ReactDiffViewer from "react-diff-viewer-continued";
 
 import { CreditsExhaustedBanner, useCreditGuard } from "@/components/credit-wallet";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/external/client";
 import { consumeCredits } from "@/lib/wallet";
 
@@ -24,6 +33,8 @@ export const Route = createFileRoute("/escalation")({
         property: "og:description",
         content: "Review AI-suggested fixes for failed SAP master data payloads.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Escalation,
@@ -33,26 +44,45 @@ type HitlRow = {
   id: string;
   iflow_name: string | null;
   error_message: string | null;
+  failure_type: string | null;
+  risk_level: string | null;
+  confidence_score: number | string | null;
   original_payload: unknown;
   proposed_payload: unknown;
   status: string;
   created_at?: string;
 };
 
+function parsePayload(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
 function prettyPayload(value: unknown): string {
   if (value == null) return "—";
-  if (typeof value === "string") {
-    try {
-      return JSON.stringify(JSON.parse(value), null, 2);
-    } catch {
-      return value;
-    }
-  }
+  const parsed = parsePayload(value);
+  if (typeof parsed === "string") return parsed;
   try {
-    return JSON.stringify(value, null, 2);
+    return JSON.stringify(parsed, null, 2);
   } catch {
-    return String(value);
+    return String(parsed);
   }
+}
+
+const riskStyles: Record<string, string> = {
+  low: "border-success/40 bg-success/10 text-success",
+  medium: "border-warning/40 bg-warning/10 text-warning-foreground",
+  high: "border-destructive/40 bg-destructive/10 text-destructive",
+};
+
+function confidenceOf(row: HitlRow): number | null {
+  if (row.confidence_score == null || row.confidence_score === "") return null;
+  const score = Number(row.confidence_score);
+  return Number.isFinite(score) ? Math.min(1, Math.max(0, score)) : null;
 }
 
 function usePendingHitl() {
@@ -73,43 +103,49 @@ function usePendingHitl() {
 
 function Escalation() {
   const queryClient = useQueryClient();
-  const { data: rows, isLoading } = usePendingHitl();
+  const { data: rows, isLoading, error: queueError } = usePendingHitl();
   const [approvingId, setApprovingId] = useState<string | null>(null);
   const [approvedIds, setApprovedIds] = useState<Set<string>>(new Set());
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selected, setSelected] = useState<HitlRow | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const { userId, balance, exhausted } = useCreditGuard();
 
   const pending = (rows ?? []).filter((r) => !approvedIds.has(r.id));
 
   const approve = async (row: HitlRow) => {
-    if (exhausted || approvingId) return;
+    if (exhausted || approvingId || !userId || row.proposed_payload == null) return;
     setApprovingId(row.id);
-    setErrors((e) => {
-      const next = { ...e };
-      delete next[row.id];
-      return next;
-    });
+    setActionError(null);
     try {
+      const response = await fetch("https://klyro-backend-spme.onrender.com/api/v1/retrigger-sap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          iflow_name: row.iflow_name,
+          payload: parsePayload(row.proposed_payload),
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`SAP retrigger failed (${response.status}). The item is still pending.`);
+      }
       const { error } = await supabase
         .from("hitl_queue")
         .update({ status: "approved" })
-        .eq("id", row.id);
+        .eq("id", row.id)
+        .eq("status", "pending_approval")
+        .select("id")
+        .single();
       if (error) throw error;
-      // Immediately remove from the active list.
       setApprovedIds((s) => new Set(s).add(row.id));
-      if (userId) {
-        try {
-          await consumeCredits(userId, "Approve & Execute", 0.5, balance);
-        } catch {
-          // Credit debit failure should not block the approval decision.
-        }
+      setSelected(null);
+      try {
+        await consumeCredits(userId, "Approve & Retrigger", 0.5, balance);
+      } catch {
+        // A credit recording failure must not undo the completed SAP action.
       }
-      queryClient.invalidateQueries({ queryKey: ["hitl-queue"] });
+      void queryClient.invalidateQueries({ queryKey: ["hitl-queue"] });
     } catch (error) {
-      setErrors((e) => ({
-        ...e,
-        [row.id]: `Approval failed: ${(error as Error).message}`,
-      }));
+      setActionError(`Approval failed: ${(error as Error).message}`);
     } finally {
       setApprovingId(null);
     }
@@ -130,6 +166,10 @@ function Escalation() {
         <div className="flex items-center justify-center py-24">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
+      ) : queueError ? (
+        <div role="alert" className="border border-destructive/40 bg-destructive/5 p-6 text-sm text-destructive">
+          Pending payloads could not be loaded. Please try again.
+        </div>
       ) : pending.length === 0 ? (
         <div className="panel flex items-center justify-center py-24">
           <p className="text-sm text-muted-foreground">
@@ -145,63 +185,86 @@ function Escalation() {
             </Badge>
           </div>
 
-          {pending.map((row) => (
-            <section key={row.id} className="panel">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
-                <div>
+          {pending.map((row) => {
+            const risk = row.risk_level?.toLowerCase() ?? "";
+            const confidence = confidenceOf(row);
+            return (
+            <section key={row.id} className="panel p-5">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold">
                     {row.iflow_name ?? "Unknown iFlow"}
                   </p>
-                  <p className="mt-0.5 text-xs text-destructive">
+                  <p className="mt-1 text-xs text-muted-foreground break-words">
                     {row.error_message ?? "No error message recorded"}
                   </p>
                 </div>
-                <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Sparkles className="h-3.5 w-3.5 text-primary" />
-                  AI-proposed fix awaiting review
-                </span>
-              </div>
-
-              <div className="grid gap-px bg-border md:grid-cols-2">
-                <div className="bg-card p-4">
-                  <p className="mb-2 text-[11px] uppercase tracking-wide text-destructive">
-                    Original failed payload
-                  </p>
-                  <pre className="max-h-80 overflow-auto rounded-sm bg-code-bg p-4 font-mono text-[11px] leading-relaxed text-code-foreground">
-                    {prettyPayload(row.original_payload)}
-                  </pre>
-                </div>
-                <div className="bg-card p-4">
-                  <p className="mb-2 text-[11px] uppercase tracking-wide text-primary">
-                    AI-suggested fix
-                  </p>
-                  <pre className="max-h-80 overflow-auto rounded-sm border border-primary/30 bg-code-bg p-4 font-mono text-[11px] leading-relaxed text-code-foreground">
-                    {prettyPayload(row.proposed_payload)}
-                  </pre>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border p-4">
-                <span className="text-xs text-destructive">
-                  {errors[row.id] ?? ""}
-                </span>
-                <Button
-                  onClick={() => approve(row)}
-                  disabled={approvingId === row.id || exhausted}
-                  className="bg-success text-success-foreground hover:bg-success/90"
-                >
-                  {approvingId === row.id ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Check className="mr-2 h-4 w-4" />
+                <div className="flex flex-wrap gap-2">
+                  {row.failure_type && <Badge variant="secondary">{row.failure_type}</Badge>}
+                  {row.risk_level && (
+                    <Badge variant="outline" className={riskStyles[risk] ?? "border-border text-muted-foreground"}>
+                      {row.risk_level} risk
+                    </Badge>
                   )}
-                  {approvingId === row.id ? "Approving…" : "Approve & Execute"}
+                </div>
+              </div>
+              <div className="mt-5 flex flex-wrap items-end justify-between gap-5 border-t border-border pt-4">
+                <div className="w-full max-w-56">
+                  <div className="mb-2 flex justify-between text-xs text-muted-foreground">
+                    <span>AI confidence</span><span>{confidence == null ? "—" : `${Math.round(confidence * 100)}%`}</span>
+                  </div>
+                  <Progress value={(confidence ?? 0) * 100} className="h-1.5" aria-label="AI confidence" />
+                </div>
+                <Button onClick={() => { setActionError(null); setSelected(row); }}>
+                  Review Fix <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </section>
-          ))}
+          );})}
         </div>
       )}
+
+      <Dialog open={Boolean(selected)} onOpenChange={(open) => { if (!open && !approvingId) setSelected(null); }}>
+        <DialogContent className="flex max-h-[90vh] w-[calc(100vw-2rem)] max-w-6xl flex-col gap-0 overflow-hidden p-0 sm:rounded-md">
+          {selected && (
+            <>
+              <DialogHeader className="shrink-0 border-b border-border px-6 py-5 pr-12">
+                <DialogTitle>Review Fix · {selected.iflow_name ?? "Unknown iFlow"}</DialogTitle>
+                <DialogDescription>
+                  Compare the failed payload with the AI-proposed correction before retriggering SAP.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="min-h-0 flex-1 overflow-auto px-4 py-5 sm:px-6">
+                <div className="min-w-[720px] overflow-auto border border-border font-mono text-xs">
+                  <ReactDiffViewer
+                    oldValue={prettyPayload(selected.original_payload)}
+                    newValue={prettyPayload(selected.proposed_payload)}
+                    splitView
+                    leftTitle="Original payload"
+                    rightTitle="Proposed payload"
+                    disableWorker
+                    showDiffOnly={false}
+                  />
+                </div>
+              </div>
+              <div className="shrink-0 border-t border-border px-6 py-4">
+                {actionError && <p role="alert" className="mb-3 text-sm text-destructive">{actionError}</p>}
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                  <Button variant="outline" onClick={() => setSelected(null)} disabled={Boolean(approvingId)}>Cancel</Button>
+                  <Button
+                    className="bg-success text-success-foreground hover:bg-success/90"
+                    disabled={Boolean(approvingId) || exhausted || !userId || selected.proposed_payload == null}
+                    onClick={() => approve(selected)}
+                  >
+                    {approvingId ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
+                    {approvingId ? "Retriggering…" : "Approve & Retrigger"}
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
