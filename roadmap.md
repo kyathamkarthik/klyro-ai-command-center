@@ -1,3 +1,5 @@
 - [x] Show structured HITL metadata and confidence in queue items.
 - [x] Review JSON changes in a side-by-side modal.
 - [x] Retrigger the approved payload, then remove the item after queue status updates.
+- [x] Add Audit Logs to dashboard navigation with a read-only ledger table.
+- [x] Search by iFlow and paginate newest-first audit records.

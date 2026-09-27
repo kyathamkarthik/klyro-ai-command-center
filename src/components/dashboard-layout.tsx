@@ -1,6 +1,7 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
+  ScrollText,
   Bot,
   ChevronDown,
   CreditCard,
@@ -43,6 +44,7 @@ const navItems = [
   { to: "/observer", label: "IFlow & MPL Observer", icon: Activity },
   { to: "/healing", label: "Autonomous Healing", icon: Bot },
   { to: "/escalation", label: "HITL Escalation Queue", icon: ShieldCheck },
+  { to: "/audit-logs", label: "Audit Logs", icon: ScrollText },
   { to: "/billing", label: "Billing & Plans", icon: CreditCard },
 ] as const;
 
