@@ -25,9 +25,9 @@ type AuditLog = {
 
 export const Route = createFileRoute("/audit-logs")({
   validateSearch: (search) => ({
-    q: typeof search.q === "string" ? search.q.slice(0, 120) : "",
-    page: Number.isSafeInteger(Number(search.page)) && Number(search.page) > 0
-      ? Number(search.page)
+    q: typeof search["q"] === "string" ? search["q"].slice(0, 120) : "",
+    page: Number.isSafeInteger(Number(search["page"])) && Number(search["page"]) > 0
+      ? Number(search["page"])
       : 1,
   }),
   head: () => ({
