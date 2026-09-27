@@ -11,3 +11,4 @@
 
 - Keep HITL payload review and retrigger orchestration in the escalation route; call the external SAP retrigger endpoint before marking the queue row approved, so a failed request remains reviewable.
 - Read the external audit ledger through the signed-in browser client only; never expose audit writes in the UI, and let the external database's access policies determine readable rows.
+- Send tenant connection credentials only to the external FastAPI connect-tenant endpoint, never write secrets to the browser database client; Vault storage belongs to the backend.

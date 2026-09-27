@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CheckCircle2, Loader2, Lock, RefreshCw, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { z } from "zod";
 
 import {
   CreditsExhaustedBanner,
@@ -28,6 +29,8 @@ export const Route = createFileRoute("/cockpit")({
         property: "og:description",
         content: "Connect and manage your SAP Integration Suite tenants in Klyro AI.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: TenantHub,
@@ -39,14 +42,24 @@ const environments = [
   { id: "prod", label: "Prod", host: "klyro-prd.it-cpi012.cfapps.eu10" },
 ];
 
+const connectionSchema = z.object({
+  tenant_id: z.string().trim().min(1).max(200),
+  client_id: z.string().trim().min(1).max(500),
+  api_base_url: z.string().trim().url().max(2048),
+  token_url: z.string().trim().url().max(2048),
+  client_secret: z.string().min(1).max(4096),
+  runtime_client_secret: z.string().min(1).max(4096),
+});
+
 function TenantHub() {
   const [env, setEnv] = useState("prod");
   const [connecting, setConnecting] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
   const ai = useAiAction();
   const [tenant, setTenant] = useState("klyro-prd-it-cpi012");
-  const [clientId, setClientId] = useState("sb-6b1e9a0f!b12345|it-rt-klyro-prd");
-  const [secret, setSecret] = useState("a4f9-cc21-77bd-9f30-e1aa");
+  const [clientId, setClientId] = useState("");
+  const [secret, setSecret] = useState("");
+  const [runtimeSecret, setRuntimeSecret] = useState("");
   const [apiBaseUrl, setApiBaseUrl] = useState(
     "https://klyro-prd.it-cpi012.cfapps.eu10.hana.ondemand.com",
   );
@@ -55,6 +68,18 @@ function TenantHub() {
   );
 
   const connect = async () => {
+    const parsed = connectionSchema.safeParse({
+      tenant_id: tenant,
+      client_id: clientId,
+      client_secret: secret,
+      runtime_client_secret: runtimeSecret,
+      api_base_url: apiBaseUrl,
+      token_url: tokenUrl,
+    });
+    if (!parsed.success) {
+      setResult({ ok: false, message: "Enter all credentials and valid API and token URLs." });
+      return;
+    }
     setConnecting(true);
     setResult(null);
     try {
@@ -63,22 +88,19 @@ function TenantHub() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            tenant_id: tenant,
-            client_id: clientId,
-            client_secret: secret,
-            api_base_url: apiBaseUrl,
-            token_url: tokenUrl,
-          }),
+          body: JSON.stringify(parsed.data),
         },
       );
-      const text = await res.text();
       setResult({
         ok: res.ok,
         message: res.ok
           ? `Tenant handshake successful (${res.status})`
-          : `Connection failed (${res.status}) ${text.slice(0, 120)}`,
+          : `Connection failed (${res.status}). Check your credentials and try again.`,
       });
+      if (res.ok) {
+        setSecret("");
+        setRuntimeSecret("");
+      }
     } catch (error) {
       setResult({
         ok: false,
@@ -108,8 +130,7 @@ function TenantHub() {
         <section className="panel p-6">
           <h2 className="text-sm font-semibold text-foreground">Tenant credentials</h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Credentials are stored encrypted and used only for MPL retrieval and message
-            re-triggering.
+            Credentials are sent to the connection service for secure storage.
           </p>
           <Separator className="my-5" />
           <div className="grid gap-5 sm:grid-cols-2">
@@ -158,14 +179,26 @@ function TenantHub() {
                 <Input
                   id="secret"
                   type="password"
+                  autoComplete="new-password"
                   value={secret}
                   onChange={(e) => setSecret(e.target.value)}
                   className="pl-9 font-mono text-xs"
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground">
-                Masked at rest. Rotated automatically every 90 days.
-              </p>
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <Label htmlFor="runtime-secret">Runtime Client Secret</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="runtime-secret"
+                  type="password"
+                  autoComplete="new-password"
+                  value={runtimeSecret}
+                  onChange={(e) => setRuntimeSecret(e.target.value)}
+                  className="pl-9 font-mono text-xs"
+                />
+              </div>
             </div>
           </div>
           <div className="mt-6 flex items-center gap-3">

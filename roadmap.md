@@ -3,3 +3,4 @@
 - [x] Retrigger the approved payload, then remove the item after queue status updates.
 - [x] Add Audit Logs to dashboard navigation with a read-only ledger table.
 - [x] Search by iFlow and paginate newest-first audit records.
+- [x] Mask both tenant secrets and submit all six connection fields only to the FastAPI connection service.
