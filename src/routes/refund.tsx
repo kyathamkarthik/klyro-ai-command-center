@@ -15,6 +15,8 @@ export const Route = createFileRoute("/refund")({
         content:
           "Learn how Klyro AI handles refunds for consumed and unused credits.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: RefundPage,

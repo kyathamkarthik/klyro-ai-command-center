@@ -16,6 +16,8 @@ export const Route = createFileRoute("/contact")({
         content:
           "Get in touch with Klyro Technologies, the company behind Klyro AI.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ContactPage,

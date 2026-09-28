@@ -21,6 +21,8 @@ export const Route = createFileRoute("/healing")({
         property: "og:description",
         content: "AI-corrected payloads, circuit breaker state and semantic mapping logs.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Healing,

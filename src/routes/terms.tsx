@@ -15,6 +15,8 @@ export const Route = createFileRoute("/terms")({
         content:
           "Terms of Service for Klyro AI, operated by Klyro Technologies.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: TermsPage,

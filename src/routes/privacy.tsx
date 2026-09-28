@@ -15,6 +15,8 @@ export const Route = createFileRoute("/privacy")({
         content:
           "How Klyro AI handles sensitive PII and SAP payloads with zero-retention architecture.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: PrivacyPage,
