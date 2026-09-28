@@ -29,6 +29,8 @@ export const Route = createFileRoute("/observer")({
         property: "og:description",
         content: "Monitor failed SAP MPLs across iFlows in real time.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Observer,
