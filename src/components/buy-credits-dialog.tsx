@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 const TIERS = [
   {
     name: "Enterprise Pilot",
+    price: "$399 / mo",
     description: "A focused evaluation of autonomous recovery in your SAP landscape.",
     features: [
       "Guided tenant onboarding",
@@ -15,6 +16,7 @@ const TIERS = [
   },
   {
     name: "Production Business",
+    price: "$1,299 / mo",
     description: "Operational coverage and expert support for business-critical integrations.",
     features: [
       "Multi-environment SAP coverage",
@@ -27,6 +29,7 @@ const TIERS = [
   },
   {
     name: "Dedicated Scale",
+    price: "Custom Pricing",
     description: "Tailored deployment and governance for complex enterprise estates.",
     features: [
       "Everything in Production Business",
@@ -44,13 +47,13 @@ export function EnterprisePricingGrid() {
       {TIERS.map((tier) => (
         <article
           key={tier.name}
-          className={`flex h-full flex-col rounded-sm border p-6 shadow-card ${
+          className={`flex h-full flex-col rounded-sm border p-6 shadow-card transition-all duration-300 hover:-translate-y-2 hover:border-primary hover:shadow-xl motion-reduce:transform-none motion-reduce:transition-none ${
             tier.highlighted ? "border-primary bg-primary/5" : "border-border bg-card"
           }`}
         >
           <div className="min-h-40 border-b border-border pb-5">
             <h3 className="text-lg font-semibold text-foreground">{tier.name}</h3>
-            <p className="mt-3 text-2xl font-semibold text-foreground">Custom Pricing</p>
+            <p className="mt-3 text-2xl font-semibold text-foreground">{tier.price}</p>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{tier.description}</p>
           </div>
           <ul className="mb-8 mt-6 space-y-4">
