@@ -20,16 +20,6 @@ export type CreditTransaction = {
   created_at: string;
 };
 
-export type CreditPackage = {
-  id: string;
-  tier: string;
-  name: string;
-  price_usd: number | null;
-  credits: number | null;
-  is_custom: boolean;
-  sort_order: number;
-};
-
 export function useWallet(userId: string | undefined) {
   const queryClient = useQueryClient();
 
@@ -108,21 +98,6 @@ export function useTransactions(userId: string | undefined) {
         .limit(10);
       if (error) throw error;
       return (data ?? []) as CreditTransaction[];
-    },
-  });
-}
-
-export function useCreditPackages() {
-  return useQuery({
-    queryKey: ["credit-packages"],
-    queryFn: async (): Promise<CreditPackage[]> => {
-      const { data, error } = await supabase
-        .from("credit_packages")
-        .select("id,tier,name,price_usd,credits,is_custom,sort_order")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as CreditPackage[];
     },
   });
 }
