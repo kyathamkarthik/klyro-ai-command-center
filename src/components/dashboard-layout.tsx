@@ -87,12 +87,12 @@ export function DashboardLayout({
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
+    <div className="flex h-screen overflow-hidden bg-background">
+      <aside className="hidden h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar md:flex">
         <div className="flex h-20 items-center border-b border-sidebar-border px-5">
           <img src="/logo.png" alt="Klyro Logo" className="h-10 w-auto" />
         </div>
-        <nav className="flex-1 space-y-1 p-3">
+        <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-3">
           <p className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
             Operations
           </p>
@@ -114,7 +114,7 @@ export function DashboardLayout({
             );
           })}
         </nav>
-        <div className="space-y-3 border-t border-sidebar-border p-4 text-xs text-muted-foreground">
+        <div className="shrink-0 space-y-3 border-t border-sidebar-border p-4 text-xs text-muted-foreground">
           <SidebarWalletBadge />
           <button
             onClick={() => setFounderOpen(true)}
@@ -132,8 +132,8 @@ export function DashboardLayout({
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-card px-6">
+      <div className="flex h-full min-w-0 flex-1 flex-col">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-border bg-card px-6">
           <div className="min-w-0">
             <h1 className="truncate text-base font-semibold text-foreground">{title}</h1>
             <p className="truncate text-xs text-muted-foreground">{description}</p>
@@ -172,7 +172,7 @@ export function DashboardLayout({
           </DropdownMenu>
         </header>
 
-        <div className="flex gap-2 overflow-x-auto border-b border-border bg-card px-4 py-2 md:hidden">
+        <div className="flex shrink-0 gap-2 overflow-x-auto border-b border-border bg-card px-4 py-2 md:hidden">
           {navItems.map((item) => (
             <Link
               key={item.to}
@@ -190,8 +190,10 @@ export function DashboardLayout({
           </button>
         </div>
 
-        <main className="flex-1 p-6">{children}</main>
-        <SiteFooter />
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <main className="min-h-full p-6">{children}</main>
+          <SiteFooter />
+        </div>
       </div>
 
       <Dialog open={founderOpen} onOpenChange={setFounderOpen}>
