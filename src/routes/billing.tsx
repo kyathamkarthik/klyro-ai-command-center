@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CreditPackagesGrid } from "@/components/buy-credits-dialog";
+import { EnterprisePricingGrid } from "@/components/buy-credits-dialog";
 import { WalletSummaryCard } from "@/components/credit-wallet";
 import { DashboardLayout } from "@/components/dashboard-layout";
 
@@ -11,12 +11,12 @@ export const Route = createFileRoute("/billing")({
       {
         name: "description",
         content:
-          "Review your Klyro Recovery Credits balance, recent usage and purchase Starter, Pro, Business or Enterprise credit packages.",
+          "Review your Klyro Recovery Credits balance and recent usage, and explore tailored enterprise plans for SAP integration recovery.",
       },
       { property: "og:title", content: "Billing & Plans | Klyro AI" },
       {
         property: "og:description",
-        content: "Manage Klyro Recovery Credits and purchase additional capacity.",
+        content: "Manage Klyro Recovery Credits and explore tailored enterprise plans.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -29,19 +29,19 @@ function Billing() {
   return (
     <DashboardLayout
       title="Billing & Plans"
-      description="Klyro Recovery Credits balance, usage history and credit packages"
+      description="Klyro Recovery Credits balance, usage history and enterprise plans"
     >
       <div className="space-y-6">
         <WalletSummaryCard />
 
-        <section className="panel p-6">
-          <h2 className="text-sm font-semibold text-foreground">
-            Purchase Klyro Recovery Credits
-          </h2>
-          <p className="mb-5 mt-1 text-xs text-muted-foreground">
-            Credits are consumed by autonomous analysis, healing and re-trigger actions.
-          </p>
-          <CreditPackagesGrid />
+        <section aria-labelledby="plans-heading">
+          <div className="mb-5">
+            <h2 id="plans-heading" className="text-xl font-semibold text-foreground">Enterprise plans</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Tailored coverage and support for your SAP Integration Suite operations.
+            </p>
+          </div>
+          <EnterprisePricingGrid />
         </section>
       </div>
     </DashboardLayout>

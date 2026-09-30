@@ -2,7 +2,6 @@ import { AlertTriangle, Loader2, Wallet } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { BuyCreditsDialog } from "@/components/buy-credits-dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -37,20 +36,17 @@ export function useCreditGuard() {
 }
 
 export function CreditsExhaustedBanner() {
-  const [open, setOpen] = useState(false);
   return (
     <div className="flex flex-col gap-3 rounded-sm border border-destructive/40 bg-destructive/5 p-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-start gap-2">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
         <p className="text-sm text-foreground">
-          Your Klyro Recovery Credits are exhausted. Please purchase additional credits
-          to continue.
+          Your Klyro Recovery Credits are exhausted. Contact sales to discuss your plan.
         </p>
       </div>
-      <Button size="sm" onClick={() => setOpen(true)}>
-        Buy More Credits
+      <Button size="sm" asChild>
+        <a href="mailto:founder@klyroai.in">Contact Sales</a>
       </Button>
-      <BuyCreditsDialog open={open} onOpenChange={setOpen} />
     </div>
   );
 }
@@ -68,7 +64,6 @@ export function WalletSummaryCard() {
   const { user } = useSession();
   const { data: wallet, error: walletError, isLoading } = useWallet(user?.id);
   const { data: transactions, isLoading: txsLoading } = useTransactions(user?.id);
-  const [buyOpen, setBuyOpen] = useState(false);
 
   const txs = transactions ?? [];
 
@@ -99,8 +94,8 @@ export function WalletSummaryCard() {
               </p>
             )}
           </div>
-          <Button size="sm" variant="outline" onClick={() => setBuyOpen(true)}>
-            Buy More Credits
+          <Button size="sm" variant="outline" asChild>
+            <a href="mailto:founder@klyroai.in">Contact Sales</a>
           </Button>
         </div>
         {lowBalance ? (
@@ -112,7 +107,6 @@ export function WalletSummaryCard() {
             <span>Low Balance: Autonomous Healing Paused. Please top-up to resume.</span>
           </div>
         ) : null}
-        <BuyCreditsDialog open={buyOpen} onOpenChange={setBuyOpen} />
       </div>
 
       <div className="rounded-sm border border-border bg-card">
