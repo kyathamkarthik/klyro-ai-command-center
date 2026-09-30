@@ -88,14 +88,21 @@ function TenantHub() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(parsed.data),
+          body: JSON.stringify({
+            ...parsed.data,
+            runtime_url: "https://12b4af44trial.it-cpitrial06-rt.cfapps.us10-001.hana.ondemand.com",
+            runtime_client_id: clientId,
+          }),
         },
       );
+
+      const responseData = await res.json().catch(() => ({}));
+
       setResult({
         ok: res.ok,
         message: res.ok
           ? `Tenant handshake successful (${res.status})`
-          : `Connection failed (${res.status}). Check your credentials and try again.`,
+          : responseData.detail || `Connection failed (${res.status}). Check your credentials and try again.`,
       });
       if (res.ok) {
         setSecret("");
