@@ -47,6 +47,8 @@ const connectionSchema = z.object({
   client_id: z.string().trim().min(1).max(500),
   api_base_url: z.string().trim().url().max(2048),
   token_url: z.string().trim().url().max(2048),
+  runtime_url: z.string().trim().url().max(2048),
+  runtime_client_id: z.string().trim().min(1).max(500),
   client_secret: z.string().min(1).max(4096),
   runtime_client_secret: z.string().min(1).max(4096),
 });
@@ -66,6 +68,8 @@ function TenantHub() {
   const [tokenUrl, setTokenUrl] = useState(
     "https://klyro-prd.authentication.eu10.hana.ondemand.com/oauth/token",
   );
+  const [runtimeUrl, setRuntimeUrl] = useState("");
+  const [runtimeClientId, setRuntimeClientId] = useState("");
 
   const connect = async () => {
     const parsed = connectionSchema.safeParse({
@@ -75,9 +79,11 @@ function TenantHub() {
       runtime_client_secret: runtimeSecret,
       api_base_url: apiBaseUrl,
       token_url: tokenUrl,
+      runtime_url: runtimeUrl,
+      runtime_client_id: runtimeClientId,
     });
     if (!parsed.success) {
-      setResult({ ok: false, message: "Enter all credentials and valid API and token URLs." });
+      setResult({ ok: false, message: "Enter all credentials and valid API, token, and runtime URLs." });
       return;
     }
     setConnecting(true);
@@ -88,11 +94,7 @@ function TenantHub() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...parsed.data,
-            runtime_url: "https://12b4af44trial.it-cpitrial06-rt.cfapps.us10-001.hana.ondemand.com",
-            runtime_client_id: clientId,
-          }),
+          body: JSON.stringify(parsed.data),
         },
       );
 
@@ -177,6 +179,27 @@ function TenantHub() {
                 onChange={(e) => setTokenUrl(e.target.value)}
                 className="font-mono text-xs"
                 placeholder="https://<tenant>.authentication.<region>.hana.ondemand.com/oauth/token"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="runtime-url">Runtime URL</Label>
+              <Input
+                id="runtime-url"
+                type="text"
+                value={runtimeUrl}
+                onChange={(e) => setRuntimeUrl(e.target.value)}
+                className="font-mono text-xs"
+                placeholder="https://<tenant>-rt.cfapps..."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="runtime-client-id">Runtime Client ID</Label>
+              <Input
+                id="runtime-client-id"
+                type="text"
+                value={runtimeClientId}
+                onChange={(e) => setRuntimeClientId(e.target.value)}
+                className="font-mono text-xs"
               />
             </div>
             <div className="space-y-2 sm:col-span-2">

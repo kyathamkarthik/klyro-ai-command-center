@@ -6,3 +6,4 @@
 - [x] Mask both tenant secrets and submit all six connection fields only to the FastAPI connection service.
 - [x] Replace billing purchase packages and wallet purchase actions with enterprise sales tiers and direct sales email links.
 - [x] Pin the dashboard sidebar, scroll page content independently, and update billing prices and card hover states.
+- [x] Collect runtime URL and runtime client ID in Tenant credentials and send both to the connection service.
